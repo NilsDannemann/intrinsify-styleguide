@@ -37,7 +37,6 @@
             font-family: 'Barlow', sans-serif;
             background-color: #f0f4f8;
         }
-        /* Custom checkbox styles */
         .custom-checkbox {
             width: 1.5rem;
             height: 1.5rem;
@@ -68,7 +67,10 @@
         
         <!-- Progress Tracker -->
         <div class="mb-8 bg-neutral-gray p-6 rounded-lg">
-            <h2 class="text-2xl font-bold mb-4">Daily Progress</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Daily Progress</h2>
+                <button id="resetDay" class="text-sm text-gray-500 hover:text-gray-700">Reset Day</button>
+            </div>
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div class="w-full md:w-5/12">
                     <p class="font-semibold">Work Tasks Completed: <span id="workProgress">0</span></p>
@@ -109,12 +111,12 @@
     </div>
 
     <script>
-        function createListItem(text, listId, progressId, progressBarId) {
+        function createListItem(text, listId, progressId, progressBarId, checked = false) {
             const li = document.createElement('li');
             li.className = 'flex items-center space-x-2 bg-white p-2 rounded';
             
             const checkbox = document.createElement('div');
-            checkbox.className = 'custom-checkbox mr-2';
+            checkbox.className = `custom-checkbox mr-2 ${checked ? 'checked' : ''}`;
             checkbox.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
@@ -124,6 +126,7 @@
             const span = document.createElement('span');
             span.textContent = text;
             span.className = 'flex-grow';
+            if (checked) span.style.textDecoration = 'line-through';
             
             const deleteBtn = document.createElement('button');
             deleteBtn.innerHTML = '&times;';
@@ -137,9 +140,10 @@
             
             checkbox.addEventListener('click', () => {
                 checkbox.classList.toggle('checked');
+                span.style.textDecoration = checkbox.classList.contains('checked') ? 'line-through' : 'none';
                 updateProgress(listId, progressId, progressBarId);
+                saveToLocalStorage();
                 if (checkbox.classList.contains('checked')) {
-                    span.style.textDecoration = 'line-through';
                     const rect = checkbox.getBoundingClientRect();
                     const x = (rect.left + rect.width / 2) / window.innerWidth;
                     const y = (rect.top + rect.height / 2) / window.innerHeight;
@@ -148,13 +152,12 @@
                         spread: 70,
                         origin: { x, y }
                     });
-                } else {
-                    span.style.textDecoration = 'none';
                 }
             });
             deleteBtn.addEventListener('click', () => {
                 li.remove();
                 updateProgress(listId, progressId, progressBarId);
+                saveToLocalStorage();
             });
         }
 
@@ -170,6 +173,30 @@
             progressBarElement.style.width = `${percentage}%`;
         }
 
+        function saveToLocalStorage() {
+            const workTasks = Array.from(document.getElementById('workList').children).map(li => ({
+                text: li.querySelector('span').textContent,
+                checked: li.querySelector('.custom-checkbox').classList.contains('checked')
+            }));
+            const healthGoals = Array.from(document.getElementById('healthList').children).map(li => ({
+                text: li.querySelector('span').textContent,
+                checked: li.querySelector('.custom-checkbox').classList.contains('checked')
+            }));
+            localStorage.setItem('workTasks', JSON.stringify(workTasks));
+            localStorage.setItem('healthGoals', JSON.stringify(healthGoals));
+        }
+
+        function loadFromLocalStorage() {
+            const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
+            const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
+            
+            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressBar', task.checked));
+            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressBar', goal.checked));
+            
+            updateProgress('workList', 'workProgress', 'workProgressBar');
+            updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+        }
+
         document.getElementById('workForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('workTask');
@@ -177,6 +204,7 @@
                 createListItem(input.value, 'workList', 'workProgress', 'workProgressBar');
                 input.value = '';
                 updateProgress('workList', 'workProgress', 'workProgressBar');
+                saveToLocalStorage();
             }
         });
 
@@ -187,8 +215,21 @@
                 createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressBar');
                 input.value = '';
                 updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+                saveToLocalStorage();
             }
         });
+
+        document.getElementById('resetDay').addEventListener('click', () => {
+            document.getElementById('workList').innerHTML = '';
+            document.getElementById('healthList').innerHTML = '';
+            updateProgress('workList', 'workProgress', 'workProgressBar');
+            updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+            localStorage.removeItem('workTasks');
+            localStorage.removeItem('healthGoals');
+        });
+
+        // Load tasks from local storage when the page loads
+        loadFromLocalStorage();
     </script>
 </body>
 </html>
