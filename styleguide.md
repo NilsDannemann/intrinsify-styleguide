@@ -54,7 +54,7 @@ Padding: 10px 35px
 Font Weight: 600
 
 # Hero Section
-Hero Section Background Color: (use primary color)
+Hero Section Background Color: (use Primary Color with gradient to Primary Color Dark)
 Hero Section Text Color: #FFFFFF
 
 # Cards
