@@ -56,9 +56,6 @@
         .custom-checkbox.checked svg {
             display: block;
         }
-        .progress-bar {
-            transition: width 0.5s ease-in-out;
-        }
         .task-item {
             transition: all 0.5s ease-in-out;
         }
@@ -78,6 +75,13 @@
         .task-item:not(.checked):active {
             cursor: grabbing;
         }
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
     </style>
 </head>
 <body class="bg-page-bg p-4 md:p-8">
@@ -91,16 +95,24 @@
                 <button id="resetDay" class="bg-secondary bg-opacity-20 hover:bg-opacity-30 text-black text-sm font-semibold py-1 px-3 rounded">Reset Day</button>
             </div>
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                <div class="w-full md:w-5/12">
-                    <p class="font-semibold">Work Tasks Completed: <span id="workProgress">0/0</span></p>
-                    <div class="w-full h-4 bg-input-bg rounded-full mt-2">
-                        <div id="workProgressBar" class="progress-bar h-full bg-primary rounded-full" style="width: 0%"></div>
+                <div class="w-full md:w-5/12 flex items-center">
+                    <svg class="progress-ring" width="80" height="80">
+                        <circle class="progress-ring__circle" stroke="#e6e6e6" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                        <circle id="workProgressRing" class="progress-ring__circle" stroke="#52B6D3" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                    </svg>
+                    <div class="ml-4">
+                        <p class="font-semibold">Work Tasks Completed</p>
+                        <p class="text-2xl font-bold"><span id="workProgress">0/0</span></p>
                     </div>
                 </div>
-                <div class="w-full md:w-5/12">
-                    <p class="font-semibold">Health Goals Achieved: <span id="healthProgress">0/0</span></p>
-                    <div class="w-full h-4 bg-input-bg rounded-full mt-2">
-                        <div id="healthProgressBar" class="progress-bar h-full bg-primary rounded-full" style="width: 0%"></div>
+                <div class="w-full md:w-5/12 flex items-center">
+                    <svg class="progress-ring" width="80" height="80">
+                        <circle class="progress-ring__circle" stroke="#e6e6e6" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                        <circle id="healthProgressRing" class="progress-ring__circle" stroke="#52B6D3" stroke-width="6" fill="transparent" r="34" cx="40" cy="40"/>
+                    </svg>
+                    <div class="ml-4">
+                        <p class="font-semibold">Health Goals Achieved</p>
+                        <p class="text-2xl font-bold"><span id="healthProgress">0/0</span></p>
                     </div>
                 </div>
             </div>
@@ -130,7 +142,7 @@
     </div>
 
     <script>
-        function createListItem(text, listId, progressId, progressBarId, checked = false) {
+        function createListItem(text, listId, progressId, progressRingId, checked = false) {
             const li = document.createElement('li');
             li.className = 'task-item flex items-center space-x-2 bg-white p-2 rounded';
             li.draggable = !checked;
@@ -163,7 +175,7 @@
                 checkbox.classList.toggle('checked');
                 span.style.textDecoration = checkbox.classList.contains('checked') ? 'line-through' : 'none';
                 li.draggable = !checkbox.classList.contains('checked');
-                updateProgress(listId, progressId, progressBarId);
+                updateProgress(listId, progressId, progressRingId);
                 saveToLocalStorage();
                 if (checkbox.classList.contains('checked')) {
                     const rect = checkbox.getBoundingClientRect();
@@ -181,7 +193,7 @@
             });
             deleteBtn.addEventListener('click', () => {
                 li.remove();
-                updateProgress(listId, progressId, progressBarId);
+                updateProgress(listId, progressId, progressRingId);
                 saveToLocalStorage();
             });
 
@@ -227,16 +239,21 @@
             });
         }
 
-        function updateProgress(listId, progressId, progressBarId) {
+        function updateProgress(listId, progressId, progressRingId) {
             const list = document.getElementById(listId);
             const total = list.children.length;
             const completed = list.querySelectorAll('.custom-checkbox.checked').length;
             const progressElement = document.getElementById(progressId);
-            const progressBarElement = document.getElementById(progressBarId);
+            const progressRing = document.getElementById(progressRingId);
             
             progressElement.textContent = `${completed}/${total}`;
             const percentage = total > 0 ? (completed / total) * 100 : 0;
-            progressBarElement.style.width = `${percentage}%`;
+            
+            const radius = progressRing.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (percentage / 100) * circumference;
+            progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressRing.style.strokeDashoffset = offset;
         }
 
         function saveToLocalStorage() {
@@ -261,11 +278,11 @@
             workTasks.sort((a, b) => a.position - b.position);
             healthGoals.sort((a, b) => a.position - b.position);
             
-            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressBar', task.checked));
-            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressBar', goal.checked));
+            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked));
+            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked));
             
-            updateProgress('workList', 'workProgress', 'workProgressBar');
-            updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+            updateProgress('workList', 'workProgress', 'workProgressRing');
+            updateProgress('healthList', 'healthProgress', 'healthProgressRing');
             updateListVisibility('workList', 'workForm');
             updateListVisibility('healthList', 'healthForm');
         }
@@ -286,9 +303,9 @@
             e.preventDefault();
             const input = document.getElementById('workTask');
             if (input.value.trim()) {
-                createListItem(input.value, 'workList', 'workProgress', 'workProgressBar');
+                createListItem(input.value, 'workList', 'workProgress', 'workProgressRing');
                 input.value = '';
-                updateProgress('workList', 'workProgress', 'workProgressBar');
+                updateProgress('workList', 'workProgress', 'workProgressRing');
                 saveToLocalStorage();
             }
         });
@@ -297,9 +314,9 @@
             e.preventDefault();
             const input = document.getElementById('healthGoal');
             if (input.value.trim()) {
-                createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressBar');
+                createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
                 input.value = '';
-                updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+                updateProgress('healthList', 'healthProgress', 'healthProgressRing');
                 saveToLocalStorage();
             }
         });
@@ -307,8 +324,8 @@
         document.getElementById('resetDay').addEventListener('click', () => {
             document.getElementById('workList').innerHTML = '';
             document.getElementById('healthList').innerHTML = '';
-            updateProgress('workList', 'workProgress', 'workProgressBar');
-            updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+            updateProgress('workList', 'workProgress', 'workProgressRing');
+            updateProgress('healthList', 'healthProgress', 'healthProgressRing');
             updateListVisibility('workList', 'workForm');
             updateListVisibility('healthList', 'healthForm');
             localStorage.removeItem('workTasks');
