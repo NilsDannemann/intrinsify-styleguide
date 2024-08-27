@@ -72,6 +72,12 @@
         .task-item.drag-over {
             border-top: 2px solid #52B6D3;
         }
+        .task-item:not(.checked) {
+            cursor: grab;
+        }
+        .task-item:not(.checked):active {
+            cursor: grabbing;
+        }
     </style>
 </head>
 <body class="bg-page-bg p-4 md:p-8">
