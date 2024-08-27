@@ -1,8 +1,16 @@
 Use the following fonts, colors, themes and other design elements from this styleguide:
 
+# CSS Reset
+html { box-sizing: border-box; font-size: 16px; } *, *:before, *:after { box-sizing: inherit; } body, h1, h2, h3, h4, h5, h6, p, ol, ul { margin: 0; padding: 0; font-weight: normal; } ol, ul { list-style: none; } img { max-width: 100%; height: auto; }
+
 # Main Colors
 Primary Color: #52B6D3
+Primary Color Dark: #337082
+Primary Color Light: #52B6D3
+
 Secondary Color: #FFCD0C
+Secondary Color Dark: #FFCD0C
+Secondary Color Light: #FFCD0C
 
 # Neutral colors
 White: #FFFFFF
@@ -29,9 +37,9 @@ Hero Subtitle Font Size: 1.35rem
 # Buttons Primary
 Color: (use secondary color)
 Border: none
-Text Color: #FFFFFF
+Text Color: #000000
 Border Radius: 4px
-Padding: 15px 40px
+Padding: 10px 35px
 Font Weight: 600
 
 # Buttons Secondary
@@ -39,12 +47,17 @@ Color: #FFFFFF
 Border: 1px solid (use border color)
 Text Color: #000000
 Border Radius: 4px
-Padding: 15px 40px
+Padding: 10px 35px
 Font Weight: 600
 
 # Hero Section
 Hero Section Background Color: (use primary color)
 Hero Section Text Color: #FFFFFF
 
+# Cards
+Card Background Color: #FFFFFF
+Card Border Color: (use border color)
+Card Border Radius: 5px
+Card Box Shadow: 0px 5px 10px rgba(0, 0, 0, 0.1)
 
 
