@@ -7,7 +7,7 @@ If needed style checkboxes, radio buttons, etc.
 ### Basic Setup - Use tailwindcss via:
 <script src="https://cdn.tailwindcss.com"></script>
 
-### Basic Setup - Always use add styles to tailwindcss via:
+### Basic Setup - Always extend styles to tailwindcss via:
 <script>
     tailwind.config = {
         theme: {
