@@ -38,29 +38,24 @@
             background-color: #f0f4f8;
         }
         /* Custom checkbox styles */
-        input[type="checkbox"] {
-            appearance: none;
-            -webkit-appearance: none;
+        .custom-checkbox {
             width: 1.5rem;
             height: 1.5rem;
             background-color: rgba(0,0,0,0.05);
             border-radius: 0.25rem;
-            outline: none;
             cursor: pointer;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        input[type="checkbox"]:checked {
+        .custom-checkbox svg {
+            display: none;
+        }
+        .custom-checkbox.checked {
             background-color: #52B6D3;
         }
-        input[type="checkbox"]:checked::before {
-            content: '✓';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
+        .custom-checkbox.checked svg {
+            display: block;
         }
         .progress-bar {
             transition: width 0.5s ease-in-out;
@@ -118,9 +113,13 @@
             const li = document.createElement('li');
             li.className = 'flex items-center space-x-2 bg-white p-2 rounded';
             
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'mr-2';
+            const checkbox = document.createElement('div');
+            checkbox.className = 'custom-checkbox mr-2';
+            checkbox.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            `;
             
             const span = document.createElement('span');
             span.textContent = text;
@@ -136,9 +135,10 @@
             
             document.getElementById(listId).appendChild(li);
             
-            checkbox.addEventListener('change', (event) => {
+            checkbox.addEventListener('click', () => {
+                checkbox.classList.toggle('checked');
                 updateProgress(listId, progressId, progressBarId);
-                if (checkbox.checked) {
+                if (checkbox.classList.contains('checked')) {
                     span.style.textDecoration = 'line-through';
                     const rect = checkbox.getBoundingClientRect();
                     const x = (rect.left + rect.width / 2) / window.innerWidth;
@@ -161,7 +161,7 @@
         function updateProgress(listId, progressId, progressBarId) {
             const list = document.getElementById(listId);
             const total = list.children.length;
-            const completed = list.querySelectorAll('input[type="checkbox"]:checked').length;
+            const completed = list.querySelectorAll('.custom-checkbox.checked').length;
             const progressElement = document.getElementById(progressId);
             const progressBarElement = document.getElementById(progressBarId);
             
