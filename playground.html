@@ -20,7 +20,7 @@
                         'secondary-light': '#FFCD0C',
                         'page-bg': '#f0f4f8',
                         'neutral-gray': '#f6f6f6',
-                        'input-bg': '#e2e8f0',
+                        'input-bg': 'rgba(0,0,0,0.05)',
                     },
                     fontFamily: {
                         'barlow': ['Barlow', 'sans-serif'],
@@ -43,7 +43,7 @@
             -webkit-appearance: none;
             width: 1.5rem;
             height: 1.5rem;
-            border: 2px solid #52B6D3;
+            background-color: rgba(0,0,0,0.05);
             border-radius: 0.25rem;
             outline: none;
             cursor: pointer;
@@ -125,7 +125,7 @@
             
             const deleteBtn = document.createElement('button');
             deleteBtn.innerHTML = '&times;';
-            deleteBtn.className = 'text-gray-400 hover:text-gray-600 font-light text-2xl leading-none';
+            deleteBtn.className = 'text-gray-400 hover:text-gray-600 font-light text-2xl leading-none ml-2';
             
             li.appendChild(checkbox);
             li.appendChild(span);
@@ -136,6 +136,7 @@
             checkbox.addEventListener('change', (event) => {
                 updateProgress(listId, progressId, progressBarId);
                 if (checkbox.checked) {
+                    span.style.textDecoration = 'line-through';
                     const rect = checkbox.getBoundingClientRect();
                     const x = (rect.left + rect.width / 2) / window.innerWidth;
                     const y = (rect.top + rect.height / 2) / window.innerHeight;
@@ -144,6 +145,8 @@
                         spread: 70,
                         origin: { x, y }
                     });
+                } else {
+                    span.style.textDecoration = 'none';
                 }
             });
             deleteBtn.addEventListener('click', () => {
