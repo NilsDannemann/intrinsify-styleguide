@@ -38,6 +38,10 @@ H6 Font Size: 1.4rem
 Hero Font Size: 3.75rem
 Hero Subtitle Font Size: 1.35rem
 
+# Containers
+Max Width: 1200px
+Max Width Small: 750px
+
 # Buttons Primary
 Color: (use secondary color)
 Border: none
