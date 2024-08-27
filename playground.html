@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Day Planner</title>
+    <title>Intrinsify Day Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -59,27 +59,34 @@
         .progress-bar {
             transition: width 0.5s ease-in-out;
         }
+        .task-item {
+            transition: all 0.5s ease-in-out;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 <body class="bg-page-bg p-4 md:p-8">
     <div class="max-w-container mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold mb-6">Interactive Day Planner</h1>
+        <h1 class="text-4xl font-bold mb-6">Intrinsify Day Planner</h1>
         
         <!-- Progress Tracker -->
         <div class="mb-8 bg-neutral-gray p-6 rounded-lg">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold">Daily Progress</h2>
-                <button id="resetDay" class="text-sm text-gray-500 hover:text-gray-700">Reset Day</button>
+                <h2 class="text-xl font-bold -mt-2">Daily Progress</h2>
+                <button id="resetDay" class="bg-secondary bg-opacity-20 hover:bg-opacity-30 text-black text-sm font-semibold py-1 px-3 rounded">Reset Day</button>
             </div>
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div class="w-full md:w-5/12">
-                    <p class="font-semibold">Work Tasks Completed: <span id="workProgress">0</span></p>
+                    <p class="font-semibold">Work Tasks Completed: <span id="workProgress">0/0</span></p>
                     <div class="w-full h-4 bg-input-bg rounded-full mt-2">
                         <div id="workProgressBar" class="progress-bar h-full bg-primary rounded-full" style="width: 0%"></div>
                     </div>
                 </div>
                 <div class="w-full md:w-5/12">
-                    <p class="font-semibold">Health Goals Achieved: <span id="healthProgress">0</span></p>
+                    <p class="font-semibold">Health Goals Achieved: <span id="healthProgress">0/0</span></p>
                     <div class="w-full h-4 bg-input-bg rounded-full mt-2">
                         <div id="healthProgressBar" class="progress-bar h-full bg-primary rounded-full" style="width: 0%"></div>
                     </div>
@@ -90,22 +97,22 @@
         <div class="space-y-6">
             <!-- Work Section -->
             <div class="bg-neutral-gray p-6 rounded-lg">
-                <h2 class="text-2xl font-bold mb-4">Work Tasks</h2>
+                <h2 class="text-xl font-bold mb-4 -mt-2">Work Tasks</h2>
                 <form id="workForm" class="mb-4 flex space-x-2">
                     <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 bg-input-bg rounded-md">
                     <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Task</button>
                 </form>
-                <ul id="workList" class="space-y-2"></ul>
+                <ul id="workList" class="task-list space-y-2"></ul>
             </div>
 
             <!-- Health Section -->
             <div class="bg-neutral-gray p-6 rounded-lg">
-                <h2 class="text-2xl font-bold mb-4">Health Goals</h2>
+                <h2 class="text-xl font-bold mb-4 -mt-2">Health Goals</h2>
                 <form id="healthForm" class="mb-4 flex space-x-2">
                     <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 bg-input-bg rounded-md">
                     <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Goal</button>
                 </form>
-                <ul id="healthList" class="space-y-2"></ul>
+                <ul id="healthList" class="task-list space-y-2"></ul>
             </div>
         </div>
     </div>
@@ -113,7 +120,7 @@
     <script>
         function createListItem(text, listId, progressId, progressBarId, checked = false) {
             const li = document.createElement('li');
-            li.className = 'flex items-center space-x-2 bg-white p-2 rounded';
+            li.className = 'task-item flex items-center space-x-2 bg-white p-2 rounded';
             
             const checkbox = document.createElement('div');
             checkbox.className = `custom-checkbox mr-2 ${checked ? 'checked' : ''}`;
@@ -152,6 +159,9 @@
                         spread: 70,
                         origin: { x, y }
                     });
+                    moveCompletedTaskToBottom(li, listId);
+                } else {
+                    moveTaskToTop(li, listId);
                 }
             });
             deleteBtn.addEventListener('click', () => {
@@ -168,7 +178,7 @@
             const progressElement = document.getElementById(progressId);
             const progressBarElement = document.getElementById(progressBarId);
             
-            progressElement.textContent = completed;
+            progressElement.textContent = `${completed}/${total}`;
             const percentage = total > 0 ? (completed / total) * 100 : 0;
             progressBarElement.style.width = `${percentage}%`;
         }
@@ -189,6 +199,10 @@
         function loadFromLocalStorage() {
             const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
             const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
+            
+            // Sort tasks so that unchecked tasks appear first
+            workTasks.sort((a, b) => a.checked - b.checked);
+            healthGoals.sort((a, b) => a.checked - b.checked);
             
             workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressBar', task.checked));
             healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressBar', goal.checked));
@@ -227,6 +241,37 @@
             localStorage.removeItem('workTasks');
             localStorage.removeItem('healthGoals');
         });
+
+        function moveCompletedTaskToBottom(taskElement, listId) {
+            const list = document.getElementById(listId);
+            const taskRect = taskElement.getBoundingClientRect();
+            const listRect = list.getBoundingClientRect();
+            const displacement = listRect.bottom - taskRect.top - taskElement.offsetHeight;
+            
+            taskElement.style.transform = `translateY(${displacement}px)`;
+            
+            setTimeout(() => {
+                taskElement.style.transform = '';
+                list.appendChild(taskElement);
+            }, 500);
+        }
+
+        function moveTaskToTop(taskElement, listId) {
+            const list = document.getElementById(listId);
+            const firstTask = list.firstElementChild;
+            if (firstTask !== taskElement) {
+                const taskRect = taskElement.getBoundingClientRect();
+                const firstTaskRect = firstTask.getBoundingClientRect();
+                const displacement = firstTaskRect.top - taskRect.top;
+                
+                taskElement.style.transform = `translateY(${displacement}px)`;
+                
+                setTimeout(() => {
+                    taskElement.style.transform = '';
+                    list.insertBefore(taskElement, firstTask);
+                }, 500);
+            }
+        }
 
         // Load tasks from local storage when the page loads
         loadFromLocalStorage();
