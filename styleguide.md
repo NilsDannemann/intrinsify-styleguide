@@ -18,6 +18,8 @@ If needed style checkboxes, radio buttons, etc.
     }
 </script>
 
+### Basic Setup - if possible always use tailwind classes
+
 # Custom Styles
 
 ### Main Colors
