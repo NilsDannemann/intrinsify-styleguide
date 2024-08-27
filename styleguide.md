@@ -23,6 +23,7 @@ H3 Font Size: 1.85rem
 H4 Font Size: 1.4rem
 H5 Font Size: 1.4rem
 H6 Font Size: 1.4rem
+Hero Font Size: 3.75rem
 
 # Buttons Primary
 Color: (use secondary color)
