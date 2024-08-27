@@ -61,5 +61,7 @@ Hero Section Text Color: #FFFFFF
 Card Background Color: #FFFFFF
 Card Border Radius: 5px
 Card Box Shadow: 0px 5px 10px rgba(0, 0, 0, 0.1)
+Card Title Size: (use h4 font size)
+Card Text Size: (use font size small)
 
 
