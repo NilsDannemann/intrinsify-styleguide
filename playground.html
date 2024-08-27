@@ -3,111 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intrinsify Sample Page</title>
+    <title>Intrinsify Webapp</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS Reset */
+        html {
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+            margin: 0;
+            padding: 0;
+            font-weight: normal;
+        }
+        ol, ul {
+            list-style: none;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Typography */
         body {
             font-family: 'Barlow', sans-serif;
             font-size: 1.35rem;
             line-height: 1.5;
+            color: #000000;
             background-color: #f6f6f6;
-            margin: 0;
-            padding: 0;
         }
+
+        /* Typography updates */
+        h1 {
+            font-size: 3.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 30px;
+        }
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: #52B6D3;
+            color: #FFFFFF;
+            padding: 20px 0;
+        }
+
+        /* Hero Section */
         .hero {
             background-color: #52B6D3;
             color: #FFFFFF;
-            padding: 4rem 2rem;
+            padding: 80px 0;
             text-align: center;
         }
         .hero h1 {
             font-size: 3.75rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
         }
         .hero p {
             font-size: 1.35rem;
-            margin-bottom: 2rem;
+            margin-bottom: 30px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 35px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
         }
         .btn-primary {
             background-color: #FFCD0C;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 4px;
-            padding: 15px 40px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .content {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        h2 {
-            font-size: 2.25rem;
-            font-weight: 700;
             color: #000000;
-        }
-        .card-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-        .card {
-            background-color: #FFFFFF;
-            border: 1px solid #D0DFE4;
-            border-radius: 4px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            width: calc(33.33% - 1rem);
-        }
-        .card h3 {
-            font-size: 1.85rem;
-            font-weight: 700;
-            margin-top: 0;
+            border: none;
         }
         .btn-secondary {
             background-color: #FFFFFF;
             color: #000000;
             border: 1px solid #D0DFE4;
-            border-radius: 4px;
-            padding: 15px 40px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 1rem;
+        }
+
+        /* Main Content */
+        main {
+            padding: 40px 0;
+        }
+
+        /* Cards */
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #D0DFE4;
+            border-radius: 5px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #337082;
+            color: #FFFFFF;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        /* Grid layout for cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Card updates */
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .card p {
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <header class="hero">
-        <h1>Welcome to Intrinsify</h1>
-        <p>Discover our amazing products and services</p>
-        <a href="#" class="btn-primary">Learn More</a>
+    <header>
+        <div class="container">
+            <h2>Intrinsify</h2>
+        </div>
     </header>
-    <main class="content">
-        <h2>About Us</h2>
-        <p>We are a company dedicated to providing innovative solutions for your business needs. Our team of experts is committed to delivering high-quality products and exceptional customer service.</p>
-        
-        <div class="card-container">
-            <div class="card">
-                <h3>Product A</h3>
-                <p>Our flagship product designed to streamline your workflow and boost productivity.</p>
-                <a href="#" class="btn-secondary">Learn More</a>
-            </div>
-            <div class="card">
-                <h3>Service B</h3>
-                <p>Expert consulting services to help you optimize your business processes.</p>
-                <a href="#" class="btn-secondary">Get Started</a>
-            </div>
-            <div class="card">
-                <h3>Solution C</h3>
-                <p>A comprehensive package that combines our best products and services.</p>
-                <a href="#" class="btn-secondary">Explore</a>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Intrinsify</h1>
+            <p>Discover the power of intrinsic motivation</p>
+            <a href="#" class="btn btn-primary">Get Started</a>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <h2>Our Services</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Coaching</h3>
+                    <p>Personalized coaching to unlock your potential</p>
+                    <a href="#" class="btn btn-secondary">Learn More</a>
+                </div>
+                <div class="card">
+                    <h3>Workshops</h3>
+                    <p>Interactive workshops to boost team motivation</p>
+                    <a href="#" class="btn btn-secondary">Sign Up</a>
+                </div>
             </div>
         </div>
     </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Intrinsify. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>

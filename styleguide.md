@@ -12,15 +12,18 @@ Secondary Color: #FFCD0C
 Secondary Color Dark: #FFCD0C
 Secondary Color Light: #FFCD0C
 
+Page Background: #ffffff
+
 # Neutral colors
 White: #FFFFFF
 Black: #000000
-Background Color Gray: #f6f6f6
+Gray: #f6f6f6
 Border Color: #D0DFE4
 
 # Typography
 Font Family: 'Barlow', sans-serif
 Font Size: 1.35rem
+Font Size Small: 1.15rem
 Line Height: 1.5
 
 # Headings
@@ -56,7 +59,6 @@ Hero Section Text Color: #FFFFFF
 
 # Cards
 Card Background Color: #FFFFFF
-Card Border Color: (use border color)
 Card Border Radius: 5px
 Card Box Shadow: 0px 5px 10px rgba(0, 0, 0, 0.1)
 
