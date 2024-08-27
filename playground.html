@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanban Board</title>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
+    <title>Interactive Day Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -17,15 +18,15 @@
                         secondary: '#FFCD0C',
                         'secondary-dark': '#FFCD0C',
                         'secondary-light': '#FFCD0C',
-                        gray: '#f6f6f6',
-                        border: '#D0DFE4',
+                        'page-bg': '#f0f4f8',
+                        'neutral-gray': '#f6f6f6',
+                        'input-bg': '#e2e8f0',
                     },
                     fontFamily: {
                         'barlow': ['Barlow', 'sans-serif'],
                     },
                     maxWidth: {
-                        'container': '1200px',
-                        'container-sm': '750px',
+                        'container': '900px',
                     },
                 },
             },
@@ -34,71 +35,153 @@
     <style>
         body {
             font-family: 'Barlow', sans-serif;
-            background-color: #ffffff;
+            background-color: #f0f4f8;
+        }
+        /* Custom checkbox styles */
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #52B6D3;
+            border-radius: 0.25rem;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+        }
+        input[type="checkbox"]:checked {
+            background-color: #52B6D3;
+        }
+        input[type="checkbox"]:checked::before {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
         }
     </style>
 </head>
-<body class="bg-white text-black">
-    <div class="max-w-container mx-auto p-4">
-        <h1 class="text-4xl font-bold mb-8">Kanban Board</h1>
-        <div id="board" class="flex space-x-4">
-            <div class="column bg-gray p-4 rounded-lg w-72">
-                <h2 class="text-xl font-bold mb-4">To Do</h2>
-                <div class="tasks" ondragover="allowDrop(event)" ondrop="drop(event)">
-                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 1</div>
-                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 2</div>
+<body class="bg-page-bg p-4 md:p-8">
+    <div class="max-w-container mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold mb-6">Interactive Day Planner</h1>
+        
+        <!-- Progress Tracker -->
+        <div class="mb-8 bg-neutral-gray p-6 rounded-lg">
+            <h2 class="text-2xl font-bold mb-4">Daily Progress</h2>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                <div class="w-full md:w-5/12">
+                    <p class="font-semibold">Work Tasks Completed: <span id="workProgress">0</span></p>
+                    <div class="w-full h-4 bg-white rounded-full mt-2">
+                        <div id="workProgressBar" class="h-full bg-primary rounded-full" style="width: 0%"></div>
+                    </div>
                 </div>
-                <button onclick="addTask(this)" class="bg-secondary text-black px-4 py-2 rounded hover:bg-secondary-light transition-colors">Add Task</button>
+                <div class="w-full md:w-5/12">
+                    <p class="font-semibold">Health Goals Achieved: <span id="healthProgress">0</span></p>
+                    <div class="w-full h-4 bg-white rounded-full mt-2">
+                        <div id="healthProgressBar" class="h-full bg-primary rounded-full" style="width: 0%"></div>
+                    </div>
+                </div>
             </div>
-            <div class="column bg-gray p-4 rounded-lg w-72">
-                <h2 class="text-xl font-bold mb-4">In Progress</h2>
-                <div class="tasks" ondragover="allowDrop(event)" ondrop="drop(event)">
-                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 3</div>
-                </div>
-                <button onclick="addTask(this)" class="bg-secondary text-black px-4 py-2 rounded hover:bg-secondary-light transition-colors">Add Task</button>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- Work Section -->
+            <div class="bg-neutral-gray p-6 rounded-lg">
+                <h2 class="text-2xl font-bold mb-4">Work Tasks</h2>
+                <form id="workForm" class="mb-4 flex space-x-2">
+                    <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 bg-input-bg rounded-md">
+                    <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Task</button>
+                </form>
+                <ul id="workList" class="space-y-2"></ul>
             </div>
-            <div class="column bg-gray p-4 rounded-lg w-72">
-                <h2 class="text-xl font-bold mb-4">Done</h2>
-                <div class="tasks" ondragover="allowDrop(event)" ondrop="drop(event)">
-                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 4</div>
-                </div>
-                <button onclick="addTask(this)" class="bg-secondary text-black px-4 py-2 rounded hover:bg-secondary-light transition-colors">Add Task</button>
+
+            <!-- Health Section -->
+            <div class="bg-neutral-gray p-6 rounded-lg">
+                <h2 class="text-2xl font-bold mb-4">Health Goals</h2>
+                <form id="healthForm" class="mb-4 flex space-x-2">
+                    <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 bg-input-bg rounded-md">
+                    <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Goal</button>
+                </form>
+                <ul id="healthList" class="space-y-2"></ul>
             </div>
         </div>
     </div>
 
     <script>
-        function allowDrop(ev) {
-            ev.preventDefault();
+        function createListItem(text, listId, progressId, progressBarId) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center space-x-2 bg-white p-2 rounded';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'mr-2';
+            
+            const span = document.createElement('span');
+            span.textContent = text;
+            span.className = 'flex-grow';
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.className = 'text-gray-400 hover:text-gray-600 font-light text-2xl leading-none';
+            
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            
+            document.getElementById(listId).appendChild(li);
+            
+            checkbox.addEventListener('change', (event) => {
+                updateProgress(listId, progressId, progressBarId);
+                if (checkbox.checked) {
+                    const rect = checkbox.getBoundingClientRect();
+                    const x = (rect.left + rect.width / 2) / window.innerWidth;
+                    const y = (rect.top + rect.height / 2) / window.innerHeight;
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { x, y }
+                    });
+                }
+            });
+            deleteBtn.addEventListener('click', () => {
+                li.remove();
+                updateProgress(listId, progressId, progressBarId);
+            });
         }
 
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
+        function updateProgress(listId, progressId, progressBarId) {
+            const list = document.getElementById(listId);
+            const total = list.children.length;
+            const completed = list.querySelectorAll('input[type="checkbox"]:checked').length;
+            const progressElement = document.getElementById(progressId);
+            const progressBarElement = document.getElementById(progressBarId);
+            
+            progressElement.textContent = completed;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            progressBarElement.style.width = `${percentage}%`;
         }
 
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.closest('.tasks').appendChild(document.getElementById(data));
-        }
-
-        function addTask(button) {
-            const taskName = prompt("Enter task name:");
-            if (taskName) {
-                const tasksContainer = button.previousElementSibling;
-                const newTask = document.createElement('div');
-                newTask.className = 'task bg-white p-2 mb-2 rounded shadow cursor-move';
-                newTask.draggable = true;
-                newTask.ondragstart = drag;
-                newTask.id = 'task-' + Date.now();
-                newTask.textContent = taskName;
-                tasksContainer.appendChild(newTask);
+        document.getElementById('workForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('workTask');
+            if (input.value.trim()) {
+                createListItem(input.value, 'workList', 'workProgress', 'workProgressBar');
+                input.value = '';
+                updateProgress('workList', 'workProgress', 'workProgressBar');
             }
-        }
+        });
 
-        // Assign unique IDs to existing tasks
-        document.querySelectorAll('.task').forEach((task, index) => {
-            task.id = 'task-' + index;
+        document.getElementById('healthForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('healthGoal');
+            if (input.value.trim()) {
+                createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressBar');
+                input.value = '';
+                updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+            }
         });
     </script>
 </body>
