@@ -24,6 +24,7 @@ H4 Font Size: 1.4rem
 H5 Font Size: 1.4rem
 H6 Font Size: 1.4rem
 Hero Font Size: 3.75rem
+Hero Subtitle Font Size: 1.35rem
 
 # Buttons Primary
 Color: (use secondary color)
@@ -40,6 +41,10 @@ Text Color: #000000
 Border Radius: 4px
 Padding: 15px 40px
 Font Weight: 600
+
+# Hero Section
+Hero Section Background Color: (use primary color)
+Hero Section Text Color: #FFFFFF
 
 
 
