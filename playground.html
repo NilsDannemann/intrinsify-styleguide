@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intrinsify Webapp</title>
+    <title>Checklist App</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Reset */
@@ -13,143 +13,86 @@
         ol, ul { list-style: none; }
         img { max-width: 100%; height: auto; }
 
-        /* Typography */
+        /* Custom Styles */
         body {
             font-family: 'Barlow', sans-serif;
             font-size: 1.35rem;
             line-height: 1.5;
-            color: #000000;
             background-color: #ffffff;
+            color: #000000;
+            padding: 2rem;
         }
-
-        /* Headings */
-        h1, h2, h3, h4, h5, h6 { font-weight: 700; }
-        h1 { font-size: 2.8rem; }
-        h2 { font-size: 2.25rem; }
-        h3 { font-size: 1.85rem; }
-        h4, h5, h6 { font-size: 1.4rem; }
-
-        /* Layout */
         .container {
-            max-width: 1200px;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 0 20px;
         }
-
-        /* Header */
-        header {
-            background-color: #52B6D3;
-            color: #FFFFFF;
-            padding: 20px 0;
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #52B6D3;
         }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(to bottom, #52B6D3, #337082);
-            color: #FFFFFF;
-            padding: 80px 0;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 3.75rem;
-            margin-bottom: 20px;
-        }
-        .hero p {
-            font-size: 1.35rem;
-            margin-bottom: 30px;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-block;
-            padding: 10px 35px;
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.15rem;
+            border: 1px solid #D0DFE4;
             border-radius: 4px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
+            margin-bottom: 1rem;
         }
-        .btn-primary {
+        button {
             background-color: #FFCD0C;
             color: #000000;
             border: none;
+            border-radius: 4px;
+            padding: 10px 35px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
         }
-        .btn-secondary {
-            background-color: #FFFFFF;
-            color: #000000;
-            border: 1px solid #D0DFE4;
+        ul {
+            margin-top: 2rem;
         }
-
-        /* Main Content */
-        main {
-            padding: 40px 0;
-        }
-
-        /* Cards */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        .card {
+        li {
             background-color: #FFFFFF;
             border-radius: 5px;
             box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 1rem;
+            margin-bottom: 1rem;
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            height: 100%;
+            align-items: center;
         }
-        .card p {
-            margin-bottom: 20px;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #337082;
-            color: #FFFFFF;
-            padding: 20px 0;
-            text-align: center;
+        .delete-btn {
+            background-color: #FFFFFF;
+            border: 1px solid #D0DFE4;
+            padding: 5px 15px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h2>Intrinsify</h2>
-        </div>
-    </header>
+    <div class="container">
+        <h1>Checklist App</h1>
+        <input type="text" id="taskInput" placeholder="Enter a new task">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
 
-    <section class="hero">
-        <div class="container">
-            <h1>Welcome to Intrinsify</h1>
-            <p>Discover the power of intrinsic motivation</p>
-            <a href="#" class="btn btn-primary">Get Started</a>
-        </div>
-    </section>
-
-    <main>
-        <div class="container">
-            <h2>Our Services</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <h3>Coaching</h3>
-                    <p>Personalized coaching to unlock your potential</p>
-                    <a href="#" class="btn btn-secondary">Learn More</a>
-                </div>
-                <div class="card">
-                    <h3>Workshops</h3>
-                    <p>Interactive workshops to boost team motivation</p>
-                    <a href="#" class="btn btn-secondary">Sign Up</a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 Intrinsify. All rights reserved.</p>
-        </div>
-    </footer>
+    <script>
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskList = document.getElementById('taskList');
+            
+            if (input.value.trim() !== '') {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${input.value}</span>
+                    <button class="delete-btn" onclick="this.parentElement.remove()">Delete</button>
+                `;
+                taskList.appendChild(li);
+                input.value = '';
+            }
+        }
+    </script>
 </body>
 </html>
