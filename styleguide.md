@@ -28,7 +28,7 @@ Line Height: 1.5
 
 # Headings
 H1, H2, H3, H4, H5, H6 Font Weight: 700
-H1, H2, H3, H4, H5, H6 Color: (use Black)
+H1, H2, H3, H4, H5, H6 Color: #000000
 H1 Font Size: 2.8rem
 H2 Font Size: 2.25rem
 H3 Font Size: 1.85rem

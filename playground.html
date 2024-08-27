@@ -3,15 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checklist App</title>
+    <title>Slider App</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Reset */
-        html { box-sizing: border-box; font-size: 16px; }
-        *, *:before, *:after { box-sizing: inherit; }
-        body, h1, h2, h3, h4, h5, h6, p, ol, ul { margin: 0; padding: 0; font-weight: normal; }
-        ol, ul { list-style: none; }
-        img { max-width: 100%; height: auto; }
+        html {
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+            margin: 0;
+            padding: 0;
+            font-weight: normal;
+        }
+        ol, ul {
+            list-style: none;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
 
         /* Custom Styles */
         body {
@@ -22,77 +36,93 @@
             color: #000000;
             padding: 2rem;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
         h1 {
             font-size: 2.8rem;
             font-weight: 700;
             margin-bottom: 1rem;
             color: #52B6D3;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 1.15rem;
-            border: 1px solid #D0DFE4;
-            border-radius: 4px;
+        .slider-container {
             margin-bottom: 1rem;
         }
-        button {
-            background-color: #FFCD0C;
-            color: #000000;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 35px;
-            font-size: 1.15rem;
-            font-weight: 600;
-            cursor: pointer;
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
         }
-        ul {
-            margin-top: 2rem;
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 1rem;
         }
-        li {
+        #results {
             background-color: #FFFFFF;
             border-radius: 5px;
             box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
             padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-top: 2rem;
         }
-        .delete-btn {
-            background-color: #FFFFFF;
-            border: 1px solid #D0DFE4;
-            padding: 5px 15px;
+        #results h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        #results p {
+            font-size: 1.15rem;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Checklist App</h1>
-        <input type="text" id="taskInput" placeholder="Enter a new task">
-        <button onclick="addTask()">Add Task</button>
-        <ul id="taskList"></ul>
+    <h1>Slider App</h1>
+    <div class="slider-container">
+        <label for="slider1">Slider 1</label>
+        <input type="range" id="slider1" min="0" max="20" value="10">
+    </div>
+    <div class="slider-container">
+        <label for="slider2">Slider 2</label>
+        <input type="range" id="slider2" min="0" max="20" value="10">
+    </div>
+    <div class="slider-container">
+        <label for="slider3">Slider 3</label>
+        <input type="range" id="slider3" min="0" max="20" value="10">
+    </div>
+    <div class="slider-container">
+        <label for="slider4">Slider 4</label>
+        <input type="range" id="slider4" min="0" max="20" value="10">
+    </div>
+    <div class="slider-container">
+        <label for="slider5">Slider 5</label>
+        <input type="range" id="slider5" min="0" max="20" value="10">
+    </div>
+    <div id="results">
+        <h2>Results</h2>
+        <p id="result-text"></p>
     </div>
 
     <script>
-        function addTask() {
-            const input = document.getElementById('taskInput');
-            const taskList = document.getElementById('taskList');
+        const sliders = document.querySelectorAll('input[type="range"]');
+        const resultText = document.getElementById('result-text');
+
+        function updateResult() {
+            const totalPoints = Array.from(sliders).reduce((sum, slider) => sum + parseInt(slider.value), 0);
             
-            if (input.value.trim() !== '') {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>${input.value}</span>
-                    <button class="delete-btn" onclick="this.parentElement.remove()">Delete</button>
-                `;
-                taskList.appendChild(li);
-                input.value = '';
+            let result;
+            if (totalPoints < 25) {
+                result = "Low score. There's room for improvement!";
+            } else if (totalPoints < 50) {
+                result = "Average score. You're on the right track!";
+            } else if (totalPoints < 75) {
+                result = "Good score. Keep up the great work!";
+            } else {
+                result = "Excellent score. You're a superstar!";
             }
+
+            resultText.textContent = `Total points: ${totalPoints}. ${result}`;
         }
+
+        sliders.forEach(slider => {
+            slider.addEventListener('input', updateResult);
+        });
+
+        updateResult();
     </script>
 </body>
 </html>
