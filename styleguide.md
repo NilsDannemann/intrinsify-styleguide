@@ -42,7 +42,7 @@ Color: (use secondary color)
 Border: none
 Text Color: #000000
 Border Radius: 4px
-Padding: 10px 35px
+Padding: 10px 35px (small version 5px 15px)
 Font Weight: 600
 
 # Buttons Secondary
@@ -50,7 +50,7 @@ Color: #FFFFFF
 Border: 1px solid (use border color)
 Text Color: #000000
 Border Radius: 4px
-Padding: 10px 35px
+Padding: 10px 35px (small version 5px 15px)
 Font Weight: 600
 
 # Hero Section
