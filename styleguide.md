@@ -59,5 +59,6 @@ Max Width Small: 750px
 Background: (use secondary color)
 Background Hover: (use secondary color light)
 Color: #000000
+Font Weight: 600
 
 

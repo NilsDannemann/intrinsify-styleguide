@@ -3,115 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>Kanban Board</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --primary-color: #52B6D3;
-            --primary-color-dark: #337082;
-            --primary-color-light: #52B6D3;
-            --secondary-color: #FFCD0C;
-            --secondary-color-dark: #FFCD0C;
-            --secondary-color-light: #FFCD0C;
-            --page-background: #ffffff;
-            --border-color: #D0DFE4;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#52B6D3',
+                        'primary-dark': '#337082',
+                        'primary-light': '#52B6D3',
+                        secondary: '#FFCD0C',
+                        'secondary-dark': '#FFCD0C',
+                        'secondary-light': '#FFCD0C',
+                        gray: '#f6f6f6',
+                        border: '#D0DFE4',
+                    },
+                    fontFamily: {
+                        'barlow': ['Barlow', 'sans-serif'],
+                    },
+                    maxWidth: {
+                        'container': '1200px',
+                        'container-sm': '750px',
+                    },
+                },
+            },
         }
-
+    </script>
+    <style>
         body {
             font-family: 'Barlow', sans-serif;
-            background-color: var(--page-background);
-            color: #000000;
-        }
-
-        .chat-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            border: 1px solid var(--border-color);
-        }
-
-        .sidebar {
-            border-right: 1px solid var(--border-color);
-        }
-
-        .chat-header {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .message {
-            background-color: #f6f6f6;
-            border-radius: 1rem;
-        }
-
-        .message.outgoing {
-            background-color: var(--primary-color);
-            color: #ffffff;
-        }
-
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: #000000;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color-light);
+            background-color: #ffffff;
         }
     </style>
 </head>
-<body class="h-screen flex flex-col">
-    <div class="chat-container flex-1 flex">
-        <div class="sidebar w-1/4 p-4">
-            <div class="flex items-center mb-4">
-                <img src="https://via.placeholder.com/40" alt="User" class="rounded-full mr-2">
-                <div>
-                    <h2 class="font-bold">Gravid Christofer</h2>
-                    <p class="text-sm">Senior Developer</p>
+<body class="bg-white text-black">
+    <div class="max-w-container mx-auto p-4">
+        <h1 class="text-4xl font-bold mb-8">Kanban Board</h1>
+        <div id="board" class="flex space-x-4">
+            <div class="column bg-gray p-4 rounded-lg w-72">
+                <h2 class="text-xl font-bold mb-4">To Do</h2>
+                <div class="tasks" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 1</div>
+                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 2</div>
                 </div>
+                <button onclick="addTask(this)" class="bg-secondary text-black px-4 py-2 rounded hover:bg-secondary-light transition-colors">Add Task</button>
             </div>
-            <input type="text" placeholder="Search Friends" class="w-full p-2 border rounded mb-4">
-            <ul>
-                <li class="flex items-center py-2">
-                    <img src="https://via.placeholder.com/32" alt="Friend" class="rounded-full mr-2">
-                    <span>Brad Forst</span>
-                </li>
-                <li class="flex items-center py-2">
-                    <img src="https://via.placeholder.com/32" alt="Friend" class="rounded-full mr-2">
-                    <span>Paul Irish</span>
-                </li>
-                <!-- Add more friend items here -->
-            </ul>
-        </div>
-        <div class="chat-area flex-1 flex flex-col">
-            <div class="chat-header p-4 flex items-center">
-                <img src="https://via.placeholder.com/40" alt="Chat Partner" class="rounded-full mr-2">
-                <h2 class="font-bold">Elizabeth Olsen</h2>
+            <div class="column bg-gray p-4 rounded-lg w-72">
+                <h2 class="text-xl font-bold mb-4">In Progress</h2>
+                <div class="tasks" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 3</div>
+                </div>
+                <button onclick="addTask(this)" class="bg-secondary text-black px-4 py-2 rounded hover:bg-secondary-light transition-colors">Add Task</button>
             </div>
-            <div class="messages flex-1 p-4 overflow-y-auto">
-                <div class="message outgoing p-2 mb-2 max-w-xs ml-auto">
-                    I am refer to the project structure and found some mistakes
+            <div class="column bg-gray p-4 rounded-lg w-72">
+                <h2 class="text-xl font-bold mb-4">Done</h2>
+                <div class="tasks" ondragover="allowDrop(event)" ondrop="drop(event)">
+                    <div class="task bg-white p-2 mb-2 rounded shadow cursor-move" draggable="true" ondragstart="drag(event)">Task 4</div>
                 </div>
-                <div class="message outgoing p-2 mb-2 max-w-xs ml-auto">
-                    There are some bugs in this project
-                </div>
-                <div class="message p-2 mb-2 max-w-xs">
-                    I see that project
-                </div>
-                <div class="message p-2 mb-2 max-w-xs">
-                    Yes there are many bugs in that project
-                </div>
-                <div class="message p-2 mb-2 max-w-xs flex items-center">
-                    <span class="bg-blue-500 text-white px-2 py-1 rounded mr-2">PDF</span>
-                    Report.PDF
-                </div>
-                <div class="message outgoing p-2 mb-2 max-w-xs ml-auto">
-                    Can you send me the report
-                </div>
-            </div>
-            <div class="chat-input p-4 flex items-center">
-                <input type="text" placeholder="Write Something" class="flex-1 p-2 border rounded-l">
-                <button class="btn-primary p-2 rounded-r">Send</button>
+                <button onclick="addTask(this)" class="bg-secondary text-black px-4 py-2 rounded hover:bg-secondary-light transition-colors">Add Task</button>
             </div>
         </div>
     </div>
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            ev.target.closest('.tasks').appendChild(document.getElementById(data));
+        }
+
+        function addTask(button) {
+            const taskName = prompt("Enter task name:");
+            if (taskName) {
+                const tasksContainer = button.previousElementSibling;
+                const newTask = document.createElement('div');
+                newTask.className = 'task bg-white p-2 mb-2 rounded shadow cursor-move';
+                newTask.draggable = true;
+                newTask.ondragstart = drag;
+                newTask.id = 'task-' + Date.now();
+                newTask.textContent = taskName;
+                tasksContainer.appendChild(newTask);
+            }
+        }
+
+        // Assign unique IDs to existing tasks
+        document.querySelectorAll('.task').forEach((task, index) => {
+            task.id = 'task-' + index;
+        });
+    </script>
 </body>
 </html>
