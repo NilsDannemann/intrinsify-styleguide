@@ -49,6 +49,36 @@
             font-weight: 700;
             color: #000000;
         }
+        .card-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #D0DFE4;
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            width: calc(33.33% - 1rem);
+        }
+        .card h3 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            margin-top: 0;
+        }
+        .btn-secondary {
+            background-color: #FFFFFF;
+            color: #000000;
+            border: 1px solid #D0DFE4;
+            border-radius: 4px;
+            padding: 15px 40px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -60,6 +90,24 @@
     <main class="content">
         <h2>About Us</h2>
         <p>We are a company dedicated to providing innovative solutions for your business needs. Our team of experts is committed to delivering high-quality products and exceptional customer service.</p>
+        
+        <div class="card-container">
+            <div class="card">
+                <h3>Product A</h3>
+                <p>Our flagship product designed to streamline your workflow and boost productivity.</p>
+                <a href="#" class="btn-secondary">Learn More</a>
+            </div>
+            <div class="card">
+                <h3>Service B</h3>
+                <p>Expert consulting services to help you optimize your business processes.</p>
+                <a href="#" class="btn-secondary">Get Started</a>
+            </div>
+            <div class="card">
+                <h3>Solution C</h3>
+                <p>A comprehensive package that combines our best products and services.</p>
+                <a href="#" class="btn-secondary">Explore</a>
+            </div>
+        </div>
     </main>
 </body>
 </html>
