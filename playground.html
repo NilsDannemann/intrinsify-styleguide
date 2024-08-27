@@ -3,101 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WhatsApp-like Messenger</title>
+    <title>Chat App</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#52B6D3',
-                        'primary-dark': '#337082',
-                        'primary-light': '#52B6D3',
-                        secondary: '#FFCD0C',
-                        'secondary-dark': '#FFCD0C',
-                        'secondary-light': '#FFCD0C',
-                        'page-bg': '#ffffff',
-                        'border-color': '#D0DFE4',
-                    },
-                    fontFamily: {
-                        'barlow': ['Barlow', 'sans-serif'],
-                    },
-                },
-            },
+    <style>
+        :root {
+            --primary-color: #52B6D3;
+            --primary-color-dark: #337082;
+            --primary-color-light: #52B6D3;
+            --secondary-color: #FFCD0C;
+            --secondary-color-dark: #FFCD0C;
+            --secondary-color-light: #FFCD0C;
+            --page-background: #ffffff;
+            --border-color: #D0DFE4;
         }
-    </script>
+
+        body {
+            font-family: 'Barlow', sans-serif;
+            background-color: var(--page-background);
+            color: #000000;
+        }
+
+        .chat-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .chat-header {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .message {
+            background-color: #f6f6f6;
+            border-radius: 1rem;
+        }
+
+        .message.outgoing {
+            background-color: var(--primary-color);
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color-light);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-barlow text-black p-4 md:p-8">
-    <div class="max-w-[750px] mx-auto h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)] flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
-        <!-- Header -->
-        <header class="bg-white p-4 border-b border-border-color">
-            <h1 class="text-primary font-bold text-xl">WhatsApp-like Messenger</h1>
-        </header>
-
-        <!-- Chat area -->
-        <div id="chatArea" class="flex-grow overflow-y-auto p-4 bg-gray-100">
-            <!-- Message bubbles will be added here dynamically -->
+<body class="h-screen flex flex-col">
+    <div class="chat-container flex-1 flex">
+        <div class="sidebar w-1/4 p-4">
+            <div class="flex items-center mb-4">
+                <img src="https://via.placeholder.com/40" alt="User" class="rounded-full mr-2">
+                <div>
+                    <h2 class="font-bold">Gravid Christofer</h2>
+                    <p class="text-sm">Senior Developer</p>
+                </div>
+            </div>
+            <input type="text" placeholder="Search Friends" class="w-full p-2 border rounded mb-4">
+            <ul>
+                <li class="flex items-center py-2">
+                    <img src="https://via.placeholder.com/32" alt="Friend" class="rounded-full mr-2">
+                    <span>Brad Forst</span>
+                </li>
+                <li class="flex items-center py-2">
+                    <img src="https://via.placeholder.com/32" alt="Friend" class="rounded-full mr-2">
+                    <span>Paul Irish</span>
+                </li>
+                <!-- Add more friend items here -->
+            </ul>
         </div>
-
-        <!-- Message input area -->
-        <div class="bg-white p-4 border-t border-border-color">
-            <div class="flex items-center">
-                <input id="messageInput" type="text" placeholder="Type a message" class="flex-grow p-2 rounded-full border border-border-color focus:outline-none focus:border-primary">
-                <button id="sendButton" class="ml-2 bg-secondary hover:bg-secondary-light text-black font-bold py-2 px-4 rounded-full">Send</button>
+        <div class="chat-area flex-1 flex flex-col">
+            <div class="chat-header p-4 flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Chat Partner" class="rounded-full mr-2">
+                <h2 class="font-bold">Elizabeth Olsen</h2>
+            </div>
+            <div class="messages flex-1 p-4 overflow-y-auto">
+                <div class="message outgoing p-2 mb-2 max-w-xs ml-auto">
+                    I am refer to the project structure and found some mistakes
+                </div>
+                <div class="message outgoing p-2 mb-2 max-w-xs ml-auto">
+                    There are some bugs in this project
+                </div>
+                <div class="message p-2 mb-2 max-w-xs">
+                    I see that project
+                </div>
+                <div class="message p-2 mb-2 max-w-xs">
+                    Yes there are many bugs in that project
+                </div>
+                <div class="message p-2 mb-2 max-w-xs flex items-center">
+                    <span class="bg-blue-500 text-white px-2 py-1 rounded mr-2">PDF</span>
+                    Report.PDF
+                </div>
+                <div class="message outgoing p-2 mb-2 max-w-xs ml-auto">
+                    Can you send me the report
+                </div>
+            </div>
+            <div class="chat-input p-4 flex items-center">
+                <input type="text" placeholder="Write Something" class="flex-1 p-2 border rounded-l">
+                <button class="btn-primary p-2 rounded-r">Send</button>
             </div>
         </div>
     </div>
-
-    <script>
-        const chatArea = document.getElementById('chatArea');
-        const messageInput = document.getElementById('messageInput');
-        const sendButton = document.getElementById('sendButton');
-
-        const sampleReplies = [
-            "That's interesting! Tell me more.",
-            "I see. How does that make you feel?",
-            "Thanks for sharing. What do you think about it?",
-            "Wow, I didn't know that! Can you elaborate?",
-            "That's a great point. Have you considered the alternative?",
-        ];
-
-        function addMessage(message, isSent) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `mb-4 flex ${isSent ? 'justify-end' : 'justify-start'}`;
-            messageDiv.innerHTML = `
-                <div class="${isSent ? 'bg-secondary' : 'bg-white shadow'} rounded-lg p-3 max-w-[70%]">
-                    <p>${message}</p>
-                </div>
-            `;
-            chatArea.appendChild(messageDiv);
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }
-
-        function getRandomReply() {
-            return sampleReplies[Math.floor(Math.random() * sampleReplies.length)];
-        }
-
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message) {
-                addMessage(message, true);
-                messageInput.value = '';
-
-                // Simulate a reply after a short delay
-                setTimeout(() => {
-                    const reply = getRandomReply();
-                    addMessage(reply, false);
-                }, 1000);
-            }
-        }
-
-        sendButton.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    </script>
 </body>
 </html>

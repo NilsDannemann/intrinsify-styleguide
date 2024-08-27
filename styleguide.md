@@ -3,6 +3,8 @@ Use the following fonts, colors, themes and other design elements from this styl
 # Basic Setup
 If not otherwise specified the result should be simple html, CSS & JS.
 If needed style checkboxes, radio buttons, etc.
+Pay attention to details with the UI & layout
+Results should look modern and sophisticated
 
 ### Basic Setup - Use tailwindcss via:
 <script src="https://cdn.tailwindcss.com"></script>
