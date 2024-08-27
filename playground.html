@@ -66,6 +66,12 @@
             display: flex;
             flex-direction: column;
         }
+        .task-item.dragging {
+            opacity: 0.5;
+        }
+        .task-item.drag-over {
+            border-top: 2px solid #52B6D3;
+        }
     </style>
 </head>
 <body class="bg-page-bg p-4 md:p-8">
@@ -121,6 +127,7 @@
         function createListItem(text, listId, progressId, progressBarId, checked = false) {
             const li = document.createElement('li');
             li.className = 'task-item flex items-center space-x-2 bg-white p-2 rounded';
+            li.draggable = !checked;
             
             const checkbox = document.createElement('div');
             checkbox.className = `custom-checkbox mr-2 ${checked ? 'checked' : ''}`;
@@ -149,6 +156,7 @@
             checkbox.addEventListener('click', () => {
                 checkbox.classList.toggle('checked');
                 span.style.textDecoration = checkbox.classList.contains('checked') ? 'line-through' : 'none';
+                li.draggable = !checkbox.classList.contains('checked');
                 updateProgress(listId, progressId, progressBarId);
                 saveToLocalStorage();
                 if (checkbox.classList.contains('checked')) {
@@ -168,7 +176,47 @@
             deleteBtn.addEventListener('click', () => {
                 li.remove();
                 updateProgress(listId, progressId, progressBarId);
-                updateListVisibility(listId, listId === 'workList' ? 'workForm' : 'healthForm');
+                saveToLocalStorage();
+            });
+
+            // Drag and drop event listeners
+            li.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', listId);
+                li.classList.add('dragging');
+            });
+
+            li.addEventListener('dragend', () => {
+                li.classList.remove('dragging');
+            });
+
+            li.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const draggingItem = document.querySelector('.dragging');
+                if (draggingItem !== li && !li.classList.contains('checked')) {
+                    const rect = li.getBoundingClientRect();
+                    const midpoint = rect.top + rect.height / 2;
+                    if (e.clientY < midpoint) {
+                        li.parentNode.insertBefore(draggingItem, li);
+                    } else {
+                        li.parentNode.insertBefore(draggingItem, li.nextSibling);
+                    }
+                }
+            });
+
+            li.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                if (!li.classList.contains('checked')) {
+                    li.classList.add('drag-over');
+                }
+            });
+
+            li.addEventListener('dragleave', () => {
+                li.classList.remove('drag-over');
+            });
+
+            li.addEventListener('drop', (e) => {
+                e.preventDefault();
+                li.classList.remove('drag-over');
                 saveToLocalStorage();
             });
         }
@@ -186,13 +234,15 @@
         }
 
         function saveToLocalStorage() {
-            const workTasks = Array.from(document.getElementById('workList').children).map(li => ({
+            const workTasks = Array.from(document.getElementById('workList').children).map((li, index) => ({
                 text: li.querySelector('span').textContent,
-                checked: li.querySelector('.custom-checkbox').classList.contains('checked')
+                checked: li.querySelector('.custom-checkbox').classList.contains('checked'),
+                position: index
             }));
-            const healthGoals = Array.from(document.getElementById('healthList').children).map(li => ({
+            const healthGoals = Array.from(document.getElementById('healthList').children).map((li, index) => ({
                 text: li.querySelector('span').textContent,
-                checked: li.querySelector('.custom-checkbox').classList.contains('checked')
+                checked: li.querySelector('.custom-checkbox').classList.contains('checked'),
+                position: index
             }));
             localStorage.setItem('workTasks', JSON.stringify(workTasks));
             localStorage.setItem('healthGoals', JSON.stringify(healthGoals));
@@ -202,8 +252,8 @@
             const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
             const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
             
-            workTasks.sort((a, b) => a.checked - b.checked);
-            healthGoals.sort((a, b) => a.checked - b.checked);
+            workTasks.sort((a, b) => a.position - b.position);
+            healthGoals.sort((a, b) => a.position - b.position);
             
             workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressBar', task.checked));
             healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressBar', goal.checked));
