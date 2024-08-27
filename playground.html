@@ -98,21 +98,21 @@
             <!-- Work Section -->
             <div class="bg-neutral-gray p-6 rounded-lg">
                 <h2 class="text-xl font-bold mb-4 -mt-2">Work Tasks</h2>
-                <form id="workForm" class="mb-4 flex space-x-2">
+                <form id="workForm" class="flex space-x-2">
                     <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 bg-input-bg rounded-md">
                     <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Task</button>
                 </form>
-                <ul id="workList" class="task-list space-y-2"></ul>
+                <ul id="workList" class="task-list space-y-2 mt-4"></ul>
             </div>
 
             <!-- Health Section -->
             <div class="bg-neutral-gray p-6 rounded-lg">
                 <h2 class="text-xl font-bold mb-4 -mt-2">Health Goals</h2>
-                <form id="healthForm" class="mb-4 flex space-x-2">
+                <form id="healthForm" class="flex space-x-2">
                     <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 bg-input-bg rounded-md">
                     <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Goal</button>
                 </form>
-                <ul id="healthList" class="task-list space-y-2"></ul>
+                <ul id="healthList" class="task-list space-y-2 mt-4"></ul>
             </div>
         </div>
     </div>
@@ -144,6 +144,7 @@
             li.appendChild(deleteBtn);
             
             document.getElementById(listId).appendChild(li);
+            updateListVisibility(listId, listId === 'workList' ? 'workForm' : 'healthForm');
             
             checkbox.addEventListener('click', () => {
                 checkbox.classList.toggle('checked');
@@ -167,6 +168,7 @@
             deleteBtn.addEventListener('click', () => {
                 li.remove();
                 updateProgress(listId, progressId, progressBarId);
+                updateListVisibility(listId, listId === 'workList' ? 'workForm' : 'healthForm');
                 saveToLocalStorage();
             });
         }
@@ -200,7 +202,6 @@
             const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
             const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
             
-            // Sort tasks so that unchecked tasks appear first
             workTasks.sort((a, b) => a.checked - b.checked);
             healthGoals.sort((a, b) => a.checked - b.checked);
             
@@ -209,6 +210,20 @@
             
             updateProgress('workList', 'workProgress', 'workProgressBar');
             updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+            updateListVisibility('workList', 'workForm');
+            updateListVisibility('healthList', 'healthForm');
+        }
+
+        function updateListVisibility(listId, formId) {
+            const list = document.getElementById(listId);
+            const form = document.getElementById(formId);
+            if (list.children.length > 0) {
+                list.classList.remove('hidden');
+                form.classList.add('mb-4');
+            } else {
+                list.classList.add('hidden');
+                form.classList.remove('mb-4');
+            }
         }
 
         document.getElementById('workForm').addEventListener('submit', (e) => {
@@ -238,6 +253,8 @@
             document.getElementById('healthList').innerHTML = '';
             updateProgress('workList', 'workProgress', 'workProgressBar');
             updateProgress('healthList', 'healthProgress', 'healthProgressBar');
+            updateListVisibility('workList', 'workForm');
+            updateListVisibility('healthList', 'healthForm');
             localStorage.removeItem('workTasks');
             localStorage.removeItem('healthGoals');
         });
