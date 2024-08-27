@@ -3,35 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple To-Do List</title>
+    <title>Gamified Todo App</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#52B6D3',
+                        'primary-dark': '#337082',
+                        'primary-light': '#52B6D3',
+                        secondary: '#FFCD0C',
+                        'secondary-dark': '#FFCD0C',
+                        'secondary-light': '#FFCD0C',
+                        gray: '#f6f6f6',
+                        border: '#D0DFE4',
+                    },
+                    fontFamily: {
+                        'barlow': ['Barlow', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
 </head>
-<body class="bg-gray-400 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 class="text-2xl font-bold mb-4">To-Do List</h1>
+<body class="bg-white font-barlow">
+    <div class="max-w-[1200px] mx-auto p-4">
+        <h1 class="text-4xl font-bold text-primary mb-6">Gamified Todo App</h1>
+        
         <div class="mb-4">
-            <input type="text" id="taskInput" placeholder="Add a new task" class="w-full p-2 border rounded">
+            <input type="text" id="todoInput" class="border border-border rounded p-2 w-full" placeholder="Enter a new todo">
+            <button onclick="addTodo()" class="bg-secondary hover:bg-secondary-light text-white font-bold py-2 px-4 rounded mt-2">Add Todo</button>
         </div>
-        <button onclick="addTask()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add Task</button>
-        <ul id="taskList" class="mt-4"></ul>
+        
+        <ul id="todoList" class="space-y-2"></ul>
+        
+        <div class="mt-6">
+            <h2 class="text-2xl font-bold text-primary-dark mb-2">Your Progress</h2>
+            <div class="bg-gray p-4 rounded">
+                <p>Completed Tasks: <span id="completedTasks">0</span></p>
+                <p>Experience Points: <span id="xp">0</span></p>
+                <p>Level: <span id="level">1</span></p>
+            </div>
+        </div>
     </div>
 
     <script>
-        function addTask() {
-            const taskInput = document.getElementById('taskInput');
-            const taskList = document.getElementById('taskList');
-            
-            if (taskInput.value.trim() !== '') {
-                const li = document.createElement('li');
-                li.className = 'flex items-center justify-between bg-gray-100 p-2 rounded mb-2';
-                li.innerHTML = `
-                    <span>${taskInput.value}</span>
-                    <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">Delete</button>
-                `;
-                taskList.appendChild(li);
-                taskInput.value = '';
+        let todos = [];
+        let completedTasks = 0;
+        let xp = 0;
+        let level = 1;
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const todo = input.value.trim();
+            if (todo) {
+                todos.push({ text: todo, completed: false });
+                input.value = '';
+                renderTodos();
             }
         }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            if (todos[index].completed) {
+                completedTasks++;
+                xp += 10;
+                if (xp >= level * 50) {
+                    level++;
+                    alert(`Congratulations! You've reached level ${level}!`);
+                }
+            } else {
+                completedTasks--;
+                xp -= 10;
+            }
+            renderTodos();
+            updateProgress();
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = `flex items-center space-x-2 ${todo.completed ? 'line-through text-gray-400' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} onclick="toggleTodo(${index})">
+                    <span>${todo.text}</span>
+                `;
+                todoList.appendChild(li);
+            });
+        }
+
+        function updateProgress() {
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('xp').textContent = xp;
+            document.getElementById('level').textContent = level;
+        }
+
+        renderTodos();
+        updateProgress();
     </script>
 </body>
 </html>
