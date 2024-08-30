@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Little Day Planner</title>
+    <title>intrinsify Day Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -88,7 +88,7 @@
     </style>
 </head>
 <body class="bg-page-bg p-4 md:p-8">
-    <h1 class="text-4xl font-bold mb-6 text-center">A Little Day Planner</h1>
+    <h1 class="text-4xl font-bold mb-6 text-center">intrinsify Day Planner</h1>
     
     <div class="max-w-container mx-auto bg-white p-6 rounded-3xl shadow-lg">
         <!-- Progress Tracker -->
@@ -249,11 +249,17 @@
             const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
             const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
             
-            workTasks.sort((a, b) => a.position - b.position);
-            healthGoals.sort((a, b) => a.position - b.position);
+            workTasks.reverse();
+            healthGoals.reverse();
             
-            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked, task.position));
-            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked, goal.position));
+            workTasks.forEach(task => {
+                const li = createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked, task.position);
+                document.getElementById('workList').insertBefore(li, document.getElementById('workList').firstChild);
+            });
+            healthGoals.forEach(goal => {
+                const li = createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked, goal.position);
+                document.getElementById('healthList').insertBefore(li, document.getElementById('healthList').firstChild);
+            });
             
             updateProgress('workList', 'workProgress', 'workProgressRing');
             updateProgress('healthList', 'healthProgress', 'healthProgressRing');
@@ -302,7 +308,8 @@
             const input = document.getElementById('workTask');
             if (input.value.trim()) {
                 const li = createListItem(input.value, 'workList', 'workProgress', 'workProgressRing');
-                document.getElementById('workList').appendChild(li);
+                const workList = document.getElementById('workList');
+                workList.insertBefore(li, workList.firstChild); // Insert at the top
                 input.value = '';
                 updateProgress('workList', 'workProgress', 'workProgressRing');
                 saveToLocalStorage();
@@ -314,7 +321,8 @@
             const input = document.getElementById('healthGoal');
             if (input.value.trim()) {
                 const li = createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
-                document.getElementById('healthList').appendChild(li);
+                const healthList = document.getElementById('healthList');
+                healthList.insertBefore(li, healthList.firstChild); // Insert at the top
                 input.value = '';
                 updateProgress('healthList', 'healthProgress', 'healthProgressRing');
                 saveToLocalStorage();
