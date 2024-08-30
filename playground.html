@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intrinsify Day Planner</title>
+    <title>A Little Day Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#52B6D3',
-                        'primary-dark': '#337082',
-                        'primary-light': '#52B6D3',
-                        secondary: '#FFCD0C',
-                        'secondary-dark': '#FFCD0C',
-                        'secondary-light': '#FFCD0C',
-                        'page-bg': '#f0f4f8',
-                        'neutral-gray': '#f6f6f6',
-                        'input-bg': 'rgba(0,0,0,0.05)',
+                        primary: '#FF69B4', // Hot pink
+                        'primary-dark': '#FF1493', // Deep pink
+                        'primary-light': '#FFB6C1', // Light pink
+                        secondary: '#FF69B4', // Using the same hot pink for secondary
+                        'secondary-dark': '#FF1493',
+                        'secondary-light': '#FFB6C1',
+                        'page-bg': '#FFF0F5', // Lavender blush for a light pink background
+                        'neutral-gray': '#FFF0F5', // Changed to Lavender blush
+                        'input-bg': 'rgba(255,105,180,0.1)', // Changed to semi-transparent hot pink
                     },
                     fontFamily: {
                         'barlow': ['Barlow', 'sans-serif'],
                     },
                     maxWidth: {
-                        'container': '900px',
+                        'container': '650px', // Changed from '900px' to '650px'
                     },
                 },
             },
@@ -35,13 +36,12 @@
     <style>
         body {
             font-family: 'Barlow', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #FFF0F5; // Changed to Lavender blush
         }
         .custom-checkbox {
             width: 1.5rem;
             height: 1.5rem;
-            background-color: rgba(0,0,0,0.05);
-            border-radius: 0.25rem;
+            background-color: rgba(255,105,180,0.1);
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -51,43 +51,46 @@
             display: none;
         }
         .custom-checkbox.checked {
-            background-color: #52B6D3;
+            background-color: #FF69B4;
         }
         .custom-checkbox.checked svg {
             display: block;
         }
         .task-item {
-            transition: all 0.5s ease-in-out;
-        }
-        .task-list {
-            display: flex;
-            flex-direction: column;
-        }
-        .task-item.dragging {
-            opacity: 0.5;
-        }
-        .task-item.drag-over {
-            border-top: 2px solid #52B6D3;
-        }
-        .task-item:not(.checked) {
             cursor: grab;
         }
-        .task-item:not(.checked):active {
-            cursor: grabbing;
+
+        /* SortableJS specific styles */
+        .sortable-ghost {
+            opacity: 0.4;
         }
-        .progress-ring {
-            transform: rotate(-90deg);
+
+        .sortable-drag {
+            background-color: #ffffff;
+            box-shadow: 0 5px 20px rgba(255, 105, 180, 0.1);
+            z-index: 1000;
+            transform: scale(1.05);
         }
+
+        .sortable-chosen {
+            background-color: #ffffff;
+        }
+
         .progress-ring__circle {
             transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
             transform-origin: 50% 50%;
+        }
+
+        .progress-ring__circle.active {
+            stroke-linecap: round;
         }
     </style>
 </head>
 <body class="bg-page-bg p-4 md:p-8">
-    <div class="max-w-container mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold mb-6">Intrinsify Day Planner</h1>
-        
+    <h1 class="text-4xl font-bold mb-6 text-center">A Little Day Planner</h1>
+    
+    <div class="max-w-container mx-auto bg-white p-6 rounded-3xl shadow-lg">
         <!-- Progress Tracker -->
         <div class="mb-6 bg-neutral-gray p-6 rounded-lg">
             <div class="flex justify-between items-center mb-4">
@@ -97,21 +100,21 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 <div class="w-full md:w-5/12 flex items-center">
                     <svg class="progress-ring" width="80" height="80">
-                        <circle class="progress-ring__circle" stroke="#e6e6e6" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
-                        <circle id="workProgressRing" class="progress-ring__circle" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                        <circle class="progress-ring__circle" stroke="rgba(255,105,180,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                        <circle id="workProgressRing" class="progress-ring__circle active" stroke="#FF69B4" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
                     </svg>
                     <div class="ml-4">
-                        <p class="font-semibold">Work Tasks Completed</p>
+                        <p class="font-semibold">Work Tasks</p>
                         <p class="text-2xl font-bold"><span id="workProgress">0/0</span></p>
                     </div>
                 </div>
                 <div class="w-full md:w-5/12 flex items-center">
                     <svg class="progress-ring" width="80" height="80">
-                        <circle class="progress-ring__circle" stroke="#e6e6e6" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
-                        <circle id="healthProgressRing" class="progress-ring__circle" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                        <circle class="progress-ring__circle" stroke="rgba(255,105,180,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                        <circle id="healthProgressRing" class="progress-ring__circle active" stroke="#FF69B4" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
                     </svg>
                     <div class="ml-4">
-                        <p class="font-semibold">Health Goals Achieved</p>
+                        <p class="font-semibold">Health Goals</p>
                         <p class="text-2xl font-bold"><span id="healthProgress">0/0</span></p>
                     </div>
                 </div>
@@ -123,8 +126,8 @@
             <div class="bg-neutral-gray p-6 rounded-lg">
                 <h2 class="text-xl font-bold mb-4 -mt-2">Work Tasks</h2>
                 <form id="workForm" class="flex space-x-2">
-                    <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 bg-input-bg rounded-md">
-                    <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Task</button>
+                    <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 px-3 bg-input-bg rounded-md">
+                    <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded">Add Task</button>
                 </form>
                 <ul id="workList" class="task-list space-y-2 mt-4"></ul>
             </div>
@@ -133,8 +136,8 @@
             <div class="bg-neutral-gray p-6 rounded-lg">
                 <h2 class="text-xl font-bold mb-4 -mt-2">Health Goals</h2>
                 <form id="healthForm" class="flex space-x-2">
-                    <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 bg-input-bg rounded-md">
-                    <button type="submit" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded">Add Goal</button>
+                    <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 px-3 bg-input-bg rounded-md">
+                    <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded">Add Goal</button>
                 </form>
                 <ul id="healthList" class="task-list space-y-2 mt-4"></ul>
             </div>
@@ -142,13 +145,13 @@
     </div>
 
     <script>
-        function createListItem(text, listId, progressId, progressRingId, checked = false) {
+        function createListItem(text, listId, progressId, progressRingId, checked = false, position = -1) {
             const li = document.createElement('li');
             li.className = 'task-item flex items-center space-x-2 bg-white p-2 rounded';
-            li.draggable = !checked;
+            li.dataset.position = position; // Store the original position
             
             const checkbox = document.createElement('div');
-            checkbox.className = `custom-checkbox mr-2 ${checked ? 'checked' : ''}`;
+            checkbox.className = `custom-checkbox mr-2 rounded ${checked ? 'checked' : ''}`;
             checkbox.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
@@ -161,8 +164,15 @@
             if (checked) span.style.textDecoration = 'line-through';
             
             const deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = '&times;';
-            deleteBtn.className = 'text-gray-400 hover:text-gray-600 font-light text-2xl leading-none mr-2';
+            deleteBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+                    <title>e-remove</title>
+                    <g fill="currentColor">
+                        <path d="M10.707,1.293a1,1,0,0,0-1.414,0L6,4.586,2.707,1.293A1,1,0,0,0,1.293,2.707L4.586,6,1.293,9.293a1,1,0,1,0,1.414,1.414L6,7.414l3.293,3.293a1,1,0,0,0,1.414-1.414L7.414,6l3.293-3.293A1,1,0,0,0,10.707,1.293Z"></path>
+                    </g>
+                </svg>
+            `;
+            deleteBtn.className = 'text-gray-400 hover:text-gray-600 opacity-50 hover:opacity-100 transition-opacity duration-200 ease-in-out p-1';
             
             li.appendChild(checkbox);
             li.appendChild(span);
@@ -174,9 +184,7 @@
             checkbox.addEventListener('click', () => {
                 checkbox.classList.toggle('checked');
                 span.style.textDecoration = checkbox.classList.contains('checked') ? 'line-through' : 'none';
-                li.draggable = !checkbox.classList.contains('checked');
                 updateProgress(listId, progressId, progressRingId);
-                saveToLocalStorage();
                 if (checkbox.classList.contains('checked')) {
                     const rect = checkbox.getBoundingClientRect();
                     const x = (rect.left + rect.width / 2) / window.innerWidth;
@@ -188,7 +196,8 @@
                     });
                     moveCompletedTaskToBottom(li, listId);
                 } else {
-                    moveTaskToTop(li, listId);
+                    moveTaskToOriginalPosition(li, listId);
+                    saveToLocalStorage();
                 }
             });
             deleteBtn.addEventListener('click', () => {
@@ -197,46 +206,15 @@
                 saveToLocalStorage();
             });
 
-            // Drag and drop event listeners
-            li.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', listId);
-                li.classList.add('dragging');
-            });
+            return li; // Return the created li element
+        }
 
-            li.addEventListener('dragend', () => {
-                li.classList.remove('dragging');
-            });
-
-            li.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                const draggingItem = document.querySelector('.dragging');
-                if (draggingItem !== li && !li.classList.contains('checked')) {
-                    const rect = li.getBoundingClientRect();
-                    const midpoint = rect.top + rect.height / 2;
-                    if (e.clientY < midpoint) {
-                        li.parentNode.insertBefore(draggingItem, li);
-                    } else {
-                        li.parentNode.insertBefore(draggingItem, li.nextSibling);
-                    }
-                }
-            });
-
-            li.addEventListener('dragenter', (e) => {
-                e.preventDefault();
-                if (!li.classList.contains('checked')) {
-                    li.classList.add('drag-over');
-                }
-            });
-
-            li.addEventListener('dragleave', () => {
-                li.classList.remove('drag-over');
-            });
-
-            li.addEventListener('drop', (e) => {
-                e.preventDefault();
-                li.classList.remove('drag-over');
-                saveToLocalStorage();
-            });
+        function setProgress(progressRing, percentage) {
+            const radius = progressRing.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            const offset = circumference - (percentage / 100) * circumference;
+            progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressRing.style.strokeDashoffset = offset;
         }
 
         function updateProgress(listId, progressId, progressRingId) {
@@ -249,23 +227,19 @@
             progressElement.textContent = `${completed}/${total}`;
             const percentage = total > 0 ? (completed / total) * 100 : 0;
             
-            const radius = progressRing.r.baseVal.value;
-            const circumference = radius * 2 * Math.PI;
-            const offset = circumference - (percentage / 100) * circumference;
-            progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
-            progressRing.style.strokeDashoffset = offset;
+            setProgress(progressRing, percentage);
         }
 
         function saveToLocalStorage() {
             const workTasks = Array.from(document.getElementById('workList').children).map((li, index) => ({
                 text: li.querySelector('span').textContent,
                 checked: li.querySelector('.custom-checkbox').classList.contains('checked'),
-                position: index
+                position: parseInt(li.dataset.position)
             }));
             const healthGoals = Array.from(document.getElementById('healthList').children).map((li, index) => ({
                 text: li.querySelector('span').textContent,
                 checked: li.querySelector('.custom-checkbox').classList.contains('checked'),
-                position: index
+                position: parseInt(li.dataset.position)
             }));
             localStorage.setItem('workTasks', JSON.stringify(workTasks));
             localStorage.setItem('healthGoals', JSON.stringify(healthGoals));
@@ -278,8 +252,8 @@
             workTasks.sort((a, b) => a.position - b.position);
             healthGoals.sort((a, b) => a.position - b.position);
             
-            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked));
-            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked));
+            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked, task.position));
+            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked, goal.position));
             
             updateProgress('workList', 'workProgress', 'workProgressRing');
             updateProgress('healthList', 'healthProgress', 'healthProgressRing');
@@ -299,11 +273,36 @@
             }
         }
 
+        function initSortable() {
+            const workList = document.getElementById('workList');
+            const healthList = document.getElementById('healthList');
+
+            const sortableOptions = {
+                animation: 150,
+                filter: '.checked',
+                onEnd: function(evt) {
+                    // Update positions after sorting
+                    Array.from(evt.target.children).forEach((li, index) => {
+                        li.dataset.position = index;
+                    });
+                    saveToLocalStorage();
+                },
+                ghostClass: 'sortable-ghost',
+                dragClass: 'sortable-drag',
+                chosenClass: 'sortable-chosen'
+            };
+
+            Sortable.create(workList, sortableOptions);
+            Sortable.create(healthList, sortableOptions);
+        }
+
+        // Update your task addition event listeners
         document.getElementById('workForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('workTask');
             if (input.value.trim()) {
-                createListItem(input.value, 'workList', 'workProgress', 'workProgressRing');
+                const li = createListItem(input.value, 'workList', 'workProgress', 'workProgressRing');
+                document.getElementById('workList').appendChild(li);
                 input.value = '';
                 updateProgress('workList', 'workProgress', 'workProgressRing');
                 saveToLocalStorage();
@@ -314,7 +313,8 @@
             e.preventDefault();
             const input = document.getElementById('healthGoal');
             if (input.value.trim()) {
-                createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
+                const li = createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
+                document.getElementById('healthList').appendChild(li);
                 input.value = '';
                 updateProgress('healthList', 'healthProgress', 'healthProgressRing');
                 saveToLocalStorage();
@@ -338,33 +338,90 @@
             const listRect = list.getBoundingClientRect();
             const displacement = listRect.bottom - taskRect.top - taskElement.offsetHeight;
             
-            taskElement.style.transform = `translateY(${displacement}px)`;
-            
-            setTimeout(() => {
-                taskElement.style.transform = '';
-                list.appendChild(taskElement);
-            }, 500);
+            let start;
+            const duration = 500; // Animation duration in milliseconds
+
+            function animate(timestamp) {
+                if (!start) start = timestamp;
+                const elapsed = timestamp - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = easeOutCubic(progress);
+                
+                taskElement.style.transform = `translateY(${displacement * easeProgress}px)`;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    taskElement.style.transform = '';
+                    list.appendChild(taskElement);
+                    
+                    // Update positions after moving the task
+                    updatePositionsAfterMove(list);
+                    
+                    // Save to localStorage
+                    saveToLocalStorage();
+                }
+            }
+
+            requestAnimationFrame(animate);
         }
 
-        function moveTaskToTop(taskElement, listId) {
+        function updatePositionsAfterMove(list) {
+            Array.from(list.children).forEach((li, index) => {
+                li.dataset.position = index;
+            });
+        }
+
+        function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3);
+        }
+
+        function moveTaskToOriginalPosition(taskElement, listId) {
             const list = document.getElementById(listId);
-            const firstTask = list.firstElementChild;
-            if (firstTask !== taskElement) {
+            const taskPosition = parseInt(taskElement.dataset.position);
+            let targetElement = null;
+
+            // Find the correct position to insert the task
+            for (let i = 0; i < list.children.length; i++) {
+                const currentPosition = parseInt(list.children[i].dataset.position);
+                if (currentPosition > taskPosition) {
+                    targetElement = list.children[i];
+                    break;
+                }
+            }
+
+            if (targetElement !== taskElement.nextElementSibling) {
                 const taskRect = taskElement.getBoundingClientRect();
-                const firstTaskRect = firstTask.getBoundingClientRect();
-                const displacement = firstTaskRect.top - taskRect.top;
-                
-                taskElement.style.transform = `translateY(${displacement}px)`;
-                
-                setTimeout(() => {
-                    taskElement.style.transform = '';
-                    list.insertBefore(taskElement, firstTask);
-                }, 500);
+                const targetRect = targetElement ? targetElement.getBoundingClientRect() : list.lastElementChild.getBoundingClientRect();
+                const displacement = taskRect.top - targetRect.top;
+
+                let start;
+                const duration = 500; // Animation duration in milliseconds
+
+                function animate(timestamp) {
+                    if (!start) start = timestamp;
+                    const elapsed = timestamp - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeProgress = easeOutCubic(progress);
+                    
+                    taskElement.style.transform = `translateY(${-displacement * easeProgress}px)`;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        taskElement.style.transform = '';
+                        list.insertBefore(taskElement, targetElement);
+                    }
+                }
+
+                requestAnimationFrame(animate);
             }
         }
 
-        // Load tasks from local storage when the page loads
-        loadFromLocalStorage();
+        window.addEventListener('load', () => {
+            loadFromLocalStorage();
+            initSortable(); // Initialize Sortable after loading items
+        });
     </script>
 </body>
 </html>
