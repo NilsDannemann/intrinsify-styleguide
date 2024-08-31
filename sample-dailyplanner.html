@@ -206,7 +206,42 @@
                 saveToLocalStorage();
             });
 
+            // Add double-click event listener for editing
+            span.addEventListener('dblclick', () => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = span.textContent;
+                input.className = 'flex-grow bg-input-bg rounded-md px-2 py-1 -my-2';
+                li.replaceChild(input, span);
+                input.focus();
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        updateTaskText(input, span, li, listId);
+                    } else if (e.key === 'Escape') {
+                        li.replaceChild(span, input);
+                    }
+                });
+
+                input.addEventListener('blur', () => {
+                    updateTaskText(input, span, li, listId);
+                });
+            });
+
             return li; // Return the created li element
+        }
+
+        function updateTaskText(input, span, li, listId) {
+            const newText = input.value.trim();
+            if (newText) {
+                span.textContent = newText;
+                li.replaceChild(span, input);
+                saveToLocalStorage();
+                updateProgress(listId, listId === 'workList' ? 'workProgress' : 'healthProgress', 
+                               listId === 'workList' ? 'workProgressRing' : 'healthProgressRing');
+            } else {
+                li.replaceChild(span, input);
+            }
         }
 
         function setProgress(progressRing, percentage) {
