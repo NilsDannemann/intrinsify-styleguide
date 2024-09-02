@@ -1,10 +1,10 @@
-Use the following fonts, colors, themes and other design elements from this styleguide:
+Use the following fonts, colors, themes and other design elements from this styleguide for the frontend.
 
 # Basic Setup
 If not otherwise specified the result should be simple html, CSS & JS.
-If needed style checkboxes, radio buttons, etc.
-Pay attention to details with the UI & layout
-Results should look modern and sophisticated
+Write the complete code for every step. Do not get lazy. Pay attention to details (e.g. spacing, alignment, colors, style checkboxes, radio buttons, range sliders, inputs, etc.). Write everything that is needed.
+
+Your goal is to completely finish the frontend.
 
 ### Basic Setup - Use tailwindcss via:
 <script src="https://cdn.tailwindcss.com"></script>
