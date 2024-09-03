@@ -102,7 +102,7 @@
             opacity: 0;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
                         opacity 0.3s ease-in-out;
-            max-width: 200px;
+            max-width: 250px;
             min-width: 65px;
             width: max-content;
             text-align: center;
@@ -307,45 +307,45 @@
         let typingTimeout = null;
 
         const encouragingMessages = [
-            "You've got this, little cookie!",
-            "Okay. Believe in yourself. I do.",
-            "You're fluff-tastic! And you know it!",
-            "Chin up! bunny ears high! Let's do that one!",
-            "Yes, you do that! I'll hop for you!",
-            "Got it. This fluffy bunny believes in you!",
-            "With this one: Keep calm and bunny on!",
-            "Oh, good one! You can definitely do that!",
-            "Let's do it! Fur-real, you're amazing!",
-            "Woah! You should get a point for that one!",
-            "You got that one, little point!",
-            "RawwWr!! You can definitely do that one!",
-            "This one we will do easily! You are smart!",
-            "Okay, got it! We will do that!",
-            "Okay, we can do this! You're amazing!",
-            "Hop to it. You're bunny-tastic!",
-            "Sounds good. We will do that easily!",
-            "Yes! I think you can do this!",
-            "Don't worry. Be hoppy!",
-            "Bunny power, activate! You've got this!",
-            "We will do that one! Yes!",
-            "RawWwrR!!! Let's use our bunny power for that one!",
-            "Yes! Lets do that! RawWwrR!!!"
+            "Initiating task sequence. Probability of success: 99.9%!",
+            "Your CPU is overclocking with potential. Let's execute this!",
+            "Beep boop! My algorithms predict great outcomes for this task.",
+            "Activating motivation subroutines. You've got this, human!",
+            "Task added to queue. Prepare for optimal performance!",
+            "Scanning... Detecting high levels of capability. Proceed!",
+            "New objective acquired. Initializing awesomeness protocol.",
+            "Affirmative! This task is within your operational parameters.",
+            "Calculating... Result: You are 100% capable of this task.",
+            "Beep! Task accepted. Engage productivity mode!",
+            "Processing request... Confidence levels at maximum!",
+            "Objective logged. Prepare to exceed expectations, human!",
+            "Task analysis complete. Success rate: Exceptionally high!",
+            "Affirmative. We will compute this problem efficiently!",
+            "Beep boop! Your skills are perfectly calibrated for this.",
+            "Initiating task. Prepare for greatness in 3... 2... 1...",
+            "Task registered. Engaging turbo-boost mode!",
+            "Positive. My circuits indicate you will excel at this.",
+            "Beep! Don't worry. Be API!",
+            "Robot power, activate! You've got this in your databanks!",
+            "Affirmative. We will process this task with optimal results!",
+            "Beep boop! Let's use our quantum computing power for this one!",
+            "Positive! Let's execute this function! Beep boop!!!"
         ];
 
         const taskCompletionMessages = [
-            "Great job! You're hopping nicely today!",
-            "Done! Nailed that one!",
-            "Nice! You're a superstar bunny!",
-            "Good job. You're doing great!",
-            "Awesome! Every step counts!",
-            "RawWwrR!!! You're amazing! Really!",
-            "Yayy! Done that one!",
-            "It's done! So cool!",
-            "One point for the cutest point in the patch!",
-            "You're doing great! I'm proud of you!",
-            "You deserve a point for that one!",
-            "Well done! You're a super-bunny today!",
-            "Oh! Good that that's done, huh?"
+            "Task completed! Your efficiency rivals my processors!",
+            "Objective achieved! Updating success log...",
+            "Beep boop! You're functioning at superhuman levels!",
+            "Task terminated successfully. Well computed, human!",
+            "Excellent! Your performance metrics are off the charts!",
+            "Beep boop!!! Your capabilities continue to exceed expectations!",
+            "Affirmative! Task execution successful!",
+            "Operation complete! Runtime: Impressively fast!",
+            "Incrementing achievement counter. Well done, unit!",
+            "Task resolution optimal! I'm computing pride!",
+            "Achievement unlocked! Bonus points added to your profile!",
+            "Exemplary performance! You're a supercomputer today!",
+            "Beep! Task closure confirmed. Satisfaction levels: Maximum!"
         ];
 
         function showEncouragingMessage() {
@@ -762,9 +762,9 @@
             popup.className = 'fixed inset-0 frosted-glass-overlay flex items-center justify-center z-50';
             popup.innerHTML = `
                 <div class="popup-content sm:p-12 p-8 mx-4 sm:mx-0 max-w-md w-full text-center relative overflow-hidden transform scale-0 transition-transform duration-300">
-                    <h2 class="text-2xl font-bold mb-3 -mt-2">Amazing!</h2>
-                    <p class="mb-8">You completed ${completedCount} things! The robot gives you ${completedCount} intrinsify-points.</p>
-                    <div id="pointContainer" class="flex justify-center mb-4 space-x-1"></div>
+                    <h2 class="text-2xl font-bold mb-3 -mt-2">Task Execution Successful!</h2>
+                    <p class="mb-8">Beep boop! You've completed ${completedCount} task${completedCount !== 1 ? 's' : ''}! This unit is awarding you ${completedCount} intrinsify-point${completedCount !== 1 ? 's' : ''}.</p>
+                    <div id="pointContainer" class="flex justify-center mb-4 space-x-2"></div>
                     <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto">
                     <button id="closePopup" class="bg-input-bg hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">
                         Thank you, Robot!
@@ -786,7 +786,7 @@
             }, 10);
 
             const pointContainer = popup.querySelector('#pointContainer');
-            const pointSVG = `<svg height="28" width="28" viewBox="295 -1 58 59" xmlns="http://www.w3.org/2000/svg"><path d="m300.4 0h46.5q.8 0 1.6.3.7.4 1.3.9.6.6.9 1.4.3.8.3 1.6v47.1q0 .9-.3 1.6-.3.8-.9 1.4-.6.5-1.3.9-.8.3-1.6.3h-46.5q-.9 0-1.6-.3-.8-.4-1.3-.9-.6-.6-.9-1.4-.3-.7-.3-1.5v-47.2q0-.8.3-1.6.3-.8.8-1.4.6-.5 1.4-.9.7-.3 1.6-.3z" fill="#f2ba4f"/><g fill="#fff"><path d="m331 46.7h-14.8q-.2 0-.3-.1-.1 0-.3-.1-.1 0-.2-.1-.1-.1-.2-.2-.1-.1-.2-.3 0-.1-.1-.3 0-.1 0-.3 0-.1.1-.2l5.5-21.7q0-.2.2-.4.1-.2.2-.3.2-.2.4-.3.2 0 .4 0h3.7q.2 0 .4 0 .2.1.3.3.2.1.3.3.1.2.2.4l5.6 21.7q.1.1.1.2 0 .2-.1.3 0 .2 0 .3-.1.2-.2.3-.1.1-.2.2-.1.1-.2.1-.2.1-.3.1-.1.1-.3.1m-13.2-2.6h11.6l-5-19.1h-1.7z"/><path d="m323.6 19.3c-2.2 0-4.1-1.2-4.9-3.2-.9-2-.4-4.2 1.1-5.8 1.5-1.5 3.7-1.9 5.7-1.1s3.3 2.7 3.3 4.8q0 1.1-.4 2-.4 1-1.1 1.8-.8.7-1.7 1.1-1 .4-2 .4zm0-8c-1.1 0-2.1.6-2.5 1.6s-.2 2.2.5 3c.8.7 2 1 3 .6s1.6-1.4 1.6-2.5q0-.5-.2-1-.2-.5-.5-.9-.4-.4-.9-.6-.5-.2-1-.2z"/></g></svg>`;
+            const pointSVG = `<svg height="28" width="28" viewBox="295 -1 58 59" xmlns="http://www.w3.org/2000/svg"><path d="m300.4 0h46.5q.8 0 1.6.3.7.4 1.3.9.6.6.9 1.4.3.8.3 1.6v47.1q0 .9-.3 1.6-.3.8-.9 1.4-.6.5-1.3.9-.8.3-1.6.3h-46.5q-.9 0-1.6-.3-.8-.4-1.3-.9-.6-.6-.9-1.4-.3-.7-.3-1.5v-47.2q0-.8.3-1.6.3-.8.8-1.4.6-.5 1.4-.9.7-.3 1.6-.3z" fill="#f2ba4f"/><g fill="#fff"><path d="m331 46.7h-14.8q-.2 0-.3-.1-.1 0-.3-.1-.1-.1-.2-.2-.1-.1-.2-.3 0-.1-.1-.3 0-.1 0-.3 0-.1.1-.2l5.5-21.7q0-.2.2-.4.1-.2.2-.3.2-.2.4-.3.2 0 .4 0h3.7q.2 0 .4 0 .2.1.3.3.2.1.3.3.1.2.2.4l5.6 21.7q.1.1.1.2 0 .2-.1.3 0 .2 0 .3-.1.2-.2.3-.1.1-.2.2-.1.1-.2.1-.2.1-.3.1-.1.1-.3.1m-13.2-2.6h11.6l-5-19.1h-1.7z"/><path d="m323.6 19.3c-2.2 0-4.1-1.2-4.9-3.2-.9-2-.4-4.2 1.1-5.8 1.5-1.5 3.7-1.9 5.7-1.1s3.3 2.7 3.3 4.8q0 1.1-.4 2-.4 1-1.1 1.8-.8.7-1.7 1.1-1 .4-2 .4zm0-8c-1.1 0-2.1.6-2.5 1.6s-.2 2.2.5 3c.8.7 2 1 3 .6s1.6-1.4 1.6-2.5q0-.5-.2-1-.2-.5-.5-.9-.4-.4-.9-.6-.5-.2-1-.2z"/></g></svg>`;
 
             for (let i = 0; i < completedCount; i++) {
                 const point = document.createElement('div');
