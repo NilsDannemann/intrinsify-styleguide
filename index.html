@@ -92,8 +92,8 @@
 
         .speech-bubble {
             position: absolute;
-            top: 0;
-            right: 100%;
+            top: 10px;
+            right: 90%;
             transform: translateY(-50%) scale(0);
             background: #52B6D3;
             padding: 10px 17.5px;
@@ -179,6 +179,22 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .floating-robot {
+            animation: float 3s ease-in-out infinite;
+        }
     </style>
     
     <!-- Favicon -->
@@ -209,10 +225,10 @@
 <body class="bg-page-bg p-4 md:p-8">
     <h1 class="text-4xl sm:text-6xl opacity-5 absolute left-0 right-0 font-bold mb-6 text-center">intrinsify Day Planner</h1>
     
-    <div class="max-w-container mx-auto mb-6 pr-8 sm:pr-0">
+    <div class="max-w-container mx-auto mb-4 sm:mb-6 mt-2 sm:mt-0 pr-2 sm:pr-0">
         <div class="w-32 ml-auto sm:m-auto relative">
             <div id="speechBubble" class="speech-bubble hidden"></div>
-            <img id="robotImage" src="images/RobotEmpty.png" alt="Cute Robot" class="h-24 max-w-32 object-contain object-bottom w-auto m-auto">
+            <img id="robotImage" src="images/RobotEmpty.png" alt="Cute Robot" class="h-24 max-w-32 object-contain object-bottom w-auto m-auto floating-robot">
         </div>
     </div>
 
@@ -765,7 +781,7 @@
                     <h2 class="text-2xl font-bold mb-3 -mt-2">Task Execution Successful!</h2>
                     <p class="mb-8">Beep boop! You've completed ${completedCount} task${completedCount !== 1 ? 's' : ''}! This unit is awarding you ${completedCount} intrinsify-point${completedCount !== 1 ? 's' : ''}.</p>
                     <div id="pointContainer" class="flex justify-center mb-4 space-x-2"></div>
-                    <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto">
+                    <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto floating-robot">
                     <button id="closePopup" class="bg-input-bg hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">
                         Thank you, Robot!
                     </button>
