@@ -799,11 +799,11 @@
             popup.innerHTML = `
                 <div class="popup-content sm:p-12 p-8 mx-4 sm:mx-0 max-w-md w-full text-center relative overflow-hidden transform scale-0 transition-transform duration-300">
                     <h2 class="text-2xl font-bold mb-3 -mt-2">Task Execution Successful!</h2>
-                    <p class="mb-8">Beep boop! You've completed ${completedCount} task${completedCount !== 1 ? 's' : ''}! This unit is awarding you ${completedCount} intrinsify-point${completedCount !== 1 ? 's' : ''}.</p>
+                    <p class="mb-8">Beep boop! You've completed ${completedCount} task${completedCount !== 1 ? 's' : ''}! Alfred is awarding you ${completedCount} intrinsify-point${completedCount !== 1 ? 's' : ''}.</p>
                     <div id="pointContainer" class="flex justify-center mb-4 space-x-2"></div>
                     <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto floating-robot">
                     <button id="closePopup" class="bg-input-bg hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">
-                        Thank you, Robot!
+                        Thank you, Alfred!
                     </button>
                     <div class="absolute inset-0 pointer-events-none">
                         <canvas id="confettiCanvas"></canvas>
