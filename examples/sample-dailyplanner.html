@@ -6,21 +6,35 @@
     <title>intrinsify Day Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        // Check if not on localhost before adding the analytics script
+        if (window.location.hostname !== "localhost" && 
+            window.location.hostname !== "127.0.0.1" && 
+            window.location.protocol !== "file:") {
+            var script = document.createElement('script');
+            script.defer = true;
+            script.async = true;
+            script.setAttribute('data-host', 'little-dayplanner.netlify.app');
+            script.src = 'https://liteanalytics.com/lite.js';
+            document.head.appendChild(script);
+        }
+    </script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         primary: '#52B6D3', // New primary color
-                        'primary-dark': '#3A8FA8', // Darker shade
-                        'primary-light': '#7CCAE0', // Lighter shade
-                        secondary: '#52B6D3', // Using the same color for secondary
-                        'secondary-dark': '#3A8FA8',
-                        'secondary-light': '#7CCAE0',
-                        'page-bg': '#E6F4F8', // Light blue background
-                        'neutral-gray': '#E6F4F8', // Changed to light blue
+                        'primary-dark': '#3A8FA8', // Darker shade of primary
+                        'primary-light': '#7AC7DE', // Lighter shade of primary
+                        secondary: '#FFCD0C', // New button color
+                        'secondary-dark': '#E6B700', // Darker shade of button color
+                        'secondary-light': '#FFD940', // Lighter shade of button color
+                        'page-bg': '#F0F8FA', // Light blue background
+                        'neutral-gray': '#F0F8FA', // Light blue for neutral areas
                         'input-bg': 'rgba(82,182,211,0.1)', // Semi-transparent primary color
                     },
                     fontFamily: {
@@ -36,12 +50,12 @@
     <style>
         body {
             font-family: 'Barlow', sans-serif;
-            background-color: #E6F4F8; // Changed to light blue
+            background-color: #F0F8FA; // Light blue background
         }
         .custom-checkbox {
             width: 1.5rem;
             height: 1.5rem;
-            background-color: rgba(82,182,211,0.1);
+            background-color: rgba(82,182,211,0.1); // Semi-transparent primary color
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -76,6 +90,68 @@
             background-color: #ffffff;
         }
 
+        .speech-bubble {
+            position: absolute;
+            top: 10px;
+            right: 90%;
+            transform: translateY(-50%) scale(0);
+            background: #52B6D3;
+            padding: 10px 17.5px;
+            color: white;
+            font-size: 14px;
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        opacity 0.3s ease-in-out;
+            max-width: 250px;
+            min-width: 65px;
+            width: max-content;
+            text-align: center;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            transform-origin: right center;
+            border-radius: 25px;
+        }
+        .speech-bubble.show {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+            animation: popInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .speech-bubble.hide {
+            opacity: 0;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045), 
+                        opacity 0.2s ease-in-out;
+        }
+        .speech-bubble:before {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            bottom: 0;
+            right: -8px;
+            height: 22px;
+            width: 20px;
+            background: #52B6D3;
+            background-attachment: fixed;
+            border-bottom-left-radius: 15px;
+        }
+        .speech-bubble:after {
+            content: "";
+            position: absolute;
+            z-index: 1;
+            bottom: -2px;
+            right: -10px;
+            width: 10px;
+            height: 25px;
+            background: #F0F8FA;
+            border-bottom-left-radius: 10px;
+        }
+
+        @keyframes popInRight {
+            0% { transform: translateY(-50%) translateX(20px) scale(0); }
+            80% { transform: translateY(-50%) translateX(-5px) scale(1.1); }
+            100% { transform: translateY(-50%) translateX(0) scale(1); }
+        }
+
         .progress-ring__circle {
             transition: stroke-dashoffset 0.35s;
             transform: rotate(-90deg);
@@ -85,70 +161,277 @@
         .progress-ring__circle.active {
             stroke-linecap: round;
         }
+
+        .frosted-glass-overlay {
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* for Safari */
+        }
+
+        .popup-content {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .speech-bubble-text {
+            min-height: 1.2em;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .floating-robot {
+            animation: float 3s ease-in-out infinite;
+        }
     </style>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+    <link rel="shortcut icon" href="images/favicon/favicon.ico">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png">
+    
+    <!-- Android Chrome Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="images/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="images/favicon/android-chrome-384x384.png">
+    
+    <!-- Microsoft Tile -->
+    <meta name="msapplication-TileImage" content="images/favicon/mstile-150x150.png">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="images/favicon/site.webmanifest">
+    
+    <!-- Safari Pinned Tab -->
+    <link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body class="bg-page-bg p-4 md:p-8">
-    <h1 class="text-4xl font-bold mb-6 text-center">intrinsify Day Planner</h1>
+    <h1 class="text-4xl sm:text-6xl opacity-5 absolute left-0 right-0 font-bold mb-6 text-center">intrinsify Day Planner</h1>
     
-    <div class="max-w-container mx-auto bg-white p-6 rounded-3xl shadow-lg">
+    <div class="max-w-container mx-auto mb-4 sm:mb-6 mt-2 sm:mt-0 pr-2 sm:pr-0">
+        <div class="w-32 ml-auto sm:m-auto relative">
+            <div id="speechBubble" class="speech-bubble hidden"></div>
+            <img id="robotImage" src="images/RobotEmpty.png" alt="Cute Robot" class="h-24 max-w-32 object-contain object-bottom w-auto m-auto floating-robot">
+        </div>
+    </div>
+
+    <div class="max-w-container mx-auto bg-white p-4 md:p-6 mb-12 rounded-3xl shadow-lg">
         <!-- Progress Tracker -->
-        <div class="mb-6 bg-neutral-gray p-6 rounded-lg">
+        <div class="mb-4 sm:mb-6 bg-neutral-gray p-4 md:p-6 rounded-lg">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold mb-2 -mt-2">Daily Progress</h2>
-                <button id="resetDay" class="bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded">Reset Day</button>
+                <div>
+                    <button id="resetDay" class="bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded">Reset Day</button>
+                </div>
             </div>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                <div class="w-full md:w-5/12 flex items-center">
-                    <svg class="progress-ring" width="80" height="80">
-                        <circle class="progress-ring__circle" stroke="rgba(82,182,211,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
-                        <circle id="workProgressRing" class="progress-ring__circle active" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
-                    </svg>
-                    <div class="ml-4">
-                        <p class="font-semibold">Work Tasks</p>
-                        <p class="text-2xl font-bold"><span id="workProgress">0/0</span></p>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0">
+                <div class="w-full md:w-5/12">
+                    <!-- Desktop: Circular progress -->
+                    <div class="hidden md:flex items-center">
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring__circle" stroke="rgba(82,182,211,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                            <circle id="workProgressRing" class="progress-ring__circle active" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
+                        </svg>
+                        <div class="ml-4">
+                            <p class="font-semibold">Work Tasks</p>
+                            <p class="text-2xl font-bold"><span id="workProgress">0/0</span></p>
+                        </div>
+                    </div>
+                    <!-- Mobile: Linear progress bar -->
+                    <div class="md:hidden">
+                        <div class="bg-input-bg rounded h-7 overflow-hidden relative">
+                            <div id="workProgressBar" class="bg-primary h-full flex items-center justify-between rounded transition-all duration-300" style="width: 0%;">
+                                <span class="text-sm font-semibold absolute left-2">Work Tasks</span>
+                                <span id="workProgressMobile" class="text-sm font-semibold absolute right-2">0/0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="w-full md:w-5/12 flex items-center">
-                    <svg class="progress-ring" width="80" height="80">
-                        <circle class="progress-ring__circle" stroke="rgba(82,182,211,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
-                        <circle id="healthProgressRing" class="progress-ring__circle active" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
-                    </svg>
-                    <div class="ml-4">
-                        <p class="font-semibold">Health Goals</p>
-                        <p class="text-2xl font-bold"><span id="healthProgress">0/0</span></p>
+                <div class="w-full md:w-5/12">
+                    <!-- Desktop: Circular progress -->
+                    <div class="hidden md:flex items-center">
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring__circle" stroke="rgba(82,182,211,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                            <circle id="healthProgressRing" class="progress-ring__circle active" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
+                        </svg>
+                        <div class="ml-4">
+                            <p class="font-semibold">Health Goals</p>
+                            <p class="text-2xl font-bold"><span id="healthProgress">0/0</span></p>
+                        </div>
+                    </div>
+                    <!-- Mobile: Linear progress bar -->
+                    <div class="md:hidden">
+                        <div class="bg-input-bg rounded h-7 overflow-hidden relative">
+                            <div id="healthProgressBar" class="bg-primary h-full flex items-center justify-between rounded transition-all duration-300" style="width: 0%;">
+                                <span class="text-sm font-semibold absolute left-2">Health Goals</span>
+                                <span id="healthProgressMobile" class="text-sm font-semibold absolute right-2">0/0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6">
             <!-- Work Section -->
-            <div class="bg-neutral-gray p-6 rounded-lg">
-                <h2 class="text-xl font-bold mb-4 -mt-2">Work Tasks</h2>
+            <div class="bg-neutral-gray p-4 md:p-6 rounded-lg">
+                <div class="flex justify-between items-center mb-4 relative">
+                    <h2 class="text-xl font-bold -mt-2">Work Tasks</h2>
+                    <button id="cleanupWorkTasks" class="absolute right-0 bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded hidden">Cleanup</button>
+                </div>
                 <form id="workForm" class="flex space-x-2">
-                    <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 px-3 bg-input-bg rounded-md">
-                    <button type="submit" class="bg-[#FFCD0C] hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">Add Task</button>
+                    <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 px-3 bg-input-bg rounded-md min-w-0">
+                    <button type="submit" class="bg-secondary hover:bg-secondary-dark text-black font-semibold py-2 px-4 rounded">Add <span class="hidden md:inline">Task</span></button>
                 </form>
-                <ul id="workList" class="task-list space-y-2 mt-4"></ul>
+                <ul id="workList" class="task-list space-y-2 empty:mt-0 mt-4"></ul>
             </div>
 
             <!-- Health Section -->
-            <div class="bg-neutral-gray p-6 rounded-lg">
-                <h2 class="text-xl font-bold mb-4 -mt-2">Health Goals</h2>
+            <div class="bg-neutral-gray p-4 md:p-6 rounded-lg">
+                <div class="flex justify-between items-center mb-4 relative">
+                    <h2 class="text-xl font-bold -mt-2">Health Goals</h2>
+                    <button id="cleanupHealthGoals" class="absolute right-0 bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded hidden">Cleanup</button>
+                </div>
                 <form id="healthForm" class="flex space-x-2">
-                    <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 px-3 bg-input-bg rounded-md">
-                    <button type="submit" class="bg-[#FFCD0C] hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">Add Goal</button>
+                    <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 px-3 bg-input-bg rounded-md min-w-0">
+                    <button type="submit" class="bg-secondary hover:bg-secondary-dark text-black font-semibold py-2 px-4 rounded">Add <span class="hidden md:inline">Goal</span></button>
                 </form>
-                <ul id="healthList" class="task-list space-y-2 mt-4"></ul>
+                <ul id="healthList" class="task-list space-y-2 empty:mt-0 mt-4"></ul>
             </div>
         </div>
     </div>
 
     <script>
+        let isSpeechBubbleVisible = false;
+        let typingTimeout = null;
+
+        const encouragingMessages = [
+            "Initiating task sequence. Probability of success: 99.9%!",
+            "Your CPU is overclocking with potential. Let's execute this!",
+            "Beep boop! My algorithms predict great outcomes for this task.",
+            "Activating motivation subroutines. You've got this, human!",
+            "Task added to queue. Prepare for optimal performance!",
+            "Scanning... Detecting high levels of capability. Proceed!",
+            "New objective acquired. Initializing awesomeness protocol.",
+            "Affirmative! This task is within your operational parameters.",
+            "Calculating... Result: You are 100% capable of this task.",
+            "Beep! Task accepted. Engage productivity mode!",
+            "Processing request... Confidence levels at maximum!",
+            "Objective logged. Prepare to exceed expectations, human!",
+            "Task analysis complete. Success rate: Exceptionally high!",
+            "Affirmative. We will compute this problem efficiently!",
+            "Beep boop! Your skills are perfectly calibrated for this.",
+            "Initiating task. Prepare for greatness in 3... 2... 1...",
+            "Task registered. Engaging turbo-boost mode!",
+            "Positive. My circuits indicate you will excel at this.",
+            "Beep! Don't worry. Be API!",
+            "Robot power, activate! You've got this in your databanks!",
+            "Affirmative. We will process this task with optimal results!",
+            "Beep boop! Let's use our quantum computing power for this one!",
+            "Positive! Let's execute this function! Beep boop!!!"
+        ];
+
+        const taskCompletionMessages = [
+            "Task completed! Your efficiency rivals my processors!",
+            "Objective achieved! Updating success log...",
+            "Beep boop! You're functioning at superhuman levels!",
+            "Task terminated successfully. Well computed, human!",
+            "Excellent! Your performance metrics are off the charts!",
+            "Beep boop!!! Your capabilities continue to exceed expectations!",
+            "Affirmative! Task execution successful!",
+            "Operation complete! Runtime: Impressively fast!",
+            "Incrementing achievement counter. Well done, unit!",
+            "Task resolution optimal! I'm computing pride!",
+            "Achievement unlocked! Bonus points added to your profile!",
+            "Exemplary performance! You're a supercomputer today!",
+            "Beep! Task closure confirmed. Satisfaction levels: Maximum!"
+        ];
+
+        function showEncouragingMessage() {
+            if (isSpeechBubbleVisible) return;
+
+            const speechBubble = document.getElementById('speechBubble');
+            const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+            
+            isSpeechBubbleVisible = true;
+            speechBubble.innerHTML = '<span class="speech-bubble-text">&nbsp;</span>';
+            speechBubble.classList.remove('hidden', 'hide');
+            
+            setTimeout(() => {
+                speechBubble.classList.add('show');
+                setTimeout(() => {
+                    typeText(speechBubble.querySelector('.speech-bubble-text'), randomMessage, 0);
+                }, 400); // Increased delay to 500ms before starting the typing effect
+            }, 10);
+        }
+
+        function typeText(element, text, index) {
+            if (index < text.length) {
+                element.textContent = text.substring(0, index + 1);
+                
+                // Check if we're at the end of a sentence
+                if (index > 0 && ".!?".includes(text[index]) && (index === text.length - 1 || text[index + 1] === ' ')) {
+                    // If it's the end of a sentence, wait a bit longer before the next character
+                    typingTimeout = setTimeout(() => typeText(element, text, index + 1), 500);
+                } else {
+                    // Normal typing speed for other characters
+                    typingTimeout = setTimeout(() => typeText(element, text, index + 1), 30);
+                }
+            } else {
+                setTimeout(hideSpeechBubble, 3000);
+            }
+        }
+
+        function hideSpeechBubble() {
+            const speechBubble = document.getElementById('speechBubble');
+            speechBubble.classList.remove('show');
+            speechBubble.classList.add('hide');
+            setTimeout(() => {
+                speechBubble.classList.add('hidden');
+                speechBubble.classList.remove('hide');
+                isSpeechBubbleVisible = false;
+            }, 300);
+        }
+
+        function showTaskCompletionMessage() {
+            if (isSpeechBubbleVisible) return;
+
+            const speechBubble = document.getElementById('speechBubble');
+            const randomMessage = taskCompletionMessages[Math.floor(Math.random() * taskCompletionMessages.length)];
+            
+            isSpeechBubbleVisible = true;
+            speechBubble.innerHTML = '<span class="speech-bubble-text">&nbsp;</span>';
+            speechBubble.classList.remove('hidden', 'hide');
+            
+            setTimeout(() => {
+                speechBubble.classList.add('show');
+                setTimeout(() => {
+                    typeText(speechBubble.querySelector('.speech-bubble-text'), randomMessage, 0);
+                }, 500); // Increased delay to 500ms before starting the typing effect
+            }, 10);
+        }
+
         function createListItem(text, listId, progressId, progressRingId, checked = false, position = -1) {
             const li = document.createElement('li');
             li.className = 'task-item flex items-center space-x-2 bg-white p-2 rounded';
-            li.dataset.position = position; // Store the original position
+            li.dataset.position = position;
             
             const checkbox = document.createElement('div');
             checkbox.className = `custom-checkbox mr-2 rounded ${checked ? 'checked' : ''}`;
@@ -160,7 +443,7 @@
             
             const span = document.createElement('span');
             span.textContent = text;
-            span.className = 'flex-grow';
+            span.className = 'flex-grow leading-normal'; // Add padding here
             if (checked) span.style.textDecoration = 'line-through';
             
             const deleteBtn = document.createElement('button');
@@ -179,12 +462,12 @@
             li.appendChild(deleteBtn);
             
             document.getElementById(listId).appendChild(li);
-            updateListVisibility(listId, listId === 'workList' ? 'workForm' : 'healthForm');
+            updateCleanupButtonVisibility();
             
             checkbox.addEventListener('click', () => {
                 checkbox.classList.toggle('checked');
                 span.style.textDecoration = checkbox.classList.contains('checked') ? 'line-through' : 'none';
-                updateProgress(listId, progressId, progressRingId);
+                updateTaskStatus();
                 if (checkbox.classList.contains('checked')) {
                     const rect = checkbox.getBoundingClientRect();
                     const x = (rect.left + rect.width / 2) / window.innerWidth;
@@ -195,15 +478,14 @@
                         origin: { x, y }
                     });
                     moveCompletedTaskToBottom(li, listId);
+                    showTaskCompletionMessage(); // Show task completion message when task is completed
                 } else {
                     moveTaskToOriginalPosition(li, listId);
-                    saveToLocalStorage();
                 }
             });
             deleteBtn.addEventListener('click', () => {
                 li.remove();
-                updateProgress(listId, progressId, progressRingId);
-                saveToLocalStorage();
+                updateTaskStatus();
             });
 
             // Add double-click event listener for editing
@@ -228,7 +510,7 @@
                 });
             });
 
-            return li; // Return the created li element
+            return li;
         }
 
         function updateTaskText(input, span, li, listId) {
@@ -258,11 +540,18 @@
             const completed = list.querySelectorAll('.custom-checkbox.checked').length;
             const progressElement = document.getElementById(progressId);
             const progressRing = document.getElementById(progressRingId);
+            const progressBar = document.getElementById(progressId + 'Bar');
+            const progressMobile = document.getElementById(progressId + 'Mobile');
             
             progressElement.textContent = `${completed}/${total}`;
             const percentage = total > 0 ? (completed / total) * 100 : 0;
             
+            // Update circular progress (desktop)
             setProgress(progressRing, percentage);
+            
+            // Update linear progress bar (mobile)
+            progressBar.style.width = `${percentage}%`;
+            progressMobile.textContent = `${completed}/${total}`;
         }
 
         function saveToLocalStorage() {
@@ -284,34 +573,15 @@
             const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
             const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
             
-            workTasks.reverse();
-            healthGoals.reverse();
+            workTasks.sort((a, b) => a.position - b.position);
+            healthGoals.sort((a, b) => a.position - b.position);
             
-            workTasks.forEach(task => {
-                const li = createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked, task.position);
-                document.getElementById('workList').insertBefore(li, document.getElementById('workList').firstChild);
-            });
-            healthGoals.forEach(goal => {
-                const li = createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked, goal.position);
-                document.getElementById('healthList').insertBefore(li, document.getElementById('healthList').firstChild);
-            });
+            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked, task.position));
+            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked, goal.position));
             
             updateProgress('workList', 'workProgress', 'workProgressRing');
             updateProgress('healthList', 'healthProgress', 'healthProgressRing');
-            updateListVisibility('workList', 'workForm');
-            updateListVisibility('healthList', 'healthForm');
-        }
-
-        function updateListVisibility(listId, formId) {
-            const list = document.getElementById(listId);
-            const form = document.getElementById(formId);
-            if (list.children.length > 0) {
-                list.classList.remove('hidden');
-                form.classList.add('mb-4');
-            } else {
-                list.classList.add('hidden');
-                form.classList.remove('mb-4');
-            }
+            updateCleanupButtonVisibility();
         }
 
         function initSortable() {
@@ -321,6 +591,8 @@
             const sortableOptions = {
                 animation: 150,
                 filter: '.checked',
+                delay: 250, // Add this line to set a 0.5-second delay
+                delayOnTouchOnly: true, // Add this line to apply the delay only on touch devices
                 onEnd: function(evt) {
                     // Update positions after sorting
                     Array.from(evt.target.children).forEach((li, index) => {
@@ -337,17 +609,32 @@
             Sortable.create(healthList, sortableOptions);
         }
 
+        function addNewTask(text, listId, progressId, progressRingId) {
+            const list = document.getElementById(listId);
+            
+            // Increment positions of existing items
+            Array.from(list.children).forEach(li => {
+                li.dataset.position = parseInt(li.dataset.position) + 1;
+            });
+            
+            // Create new item at position 0
+            const li = createListItem(text, listId, progressId, progressRingId, false, 0);
+            
+            // Insert at the top of the list
+            list.insertBefore(li, list.firstChild);
+            
+            updateProgress(listId, progressId, progressRingId);
+            saveToLocalStorage();
+            showEncouragingMessage();
+        }
+
         // Update your task addition event listeners
         document.getElementById('workForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('workTask');
             if (input.value.trim()) {
-                const li = createListItem(input.value, 'workList', 'workProgress', 'workProgressRing');
-                const workList = document.getElementById('workList');
-                workList.insertBefore(li, workList.firstChild); // Insert at the top
+                addNewTask(input.value, 'workList', 'workProgress', 'workProgressRing');
                 input.value = '';
-                updateProgress('workList', 'workProgress', 'workProgressRing');
-                saveToLocalStorage();
             }
         });
 
@@ -355,12 +642,8 @@
             e.preventDefault();
             const input = document.getElementById('healthGoal');
             if (input.value.trim()) {
-                const li = createListItem(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
-                const healthList = document.getElementById('healthList');
-                healthList.insertBefore(li, healthList.firstChild); // Insert at the top
+                addNewTask(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
                 input.value = '';
-                updateProgress('healthList', 'healthProgress', 'healthProgressRing');
-                saveToLocalStorage();
             }
         });
 
@@ -369,10 +652,10 @@
             document.getElementById('healthList').innerHTML = '';
             updateProgress('workList', 'workProgress', 'workProgressRing');
             updateProgress('healthList', 'healthProgress', 'healthProgressRing');
-            updateListVisibility('workList', 'workForm');
-            updateListVisibility('healthList', 'healthForm');
             localStorage.removeItem('workTasks');
             localStorage.removeItem('healthGoals');
+            setRandomrobotImage(); // Add this line to change the robot image
+            updateCleanupButtonVisibility(); // Add this line to hide the cleanup button
         });
 
         function moveCompletedTaskToBottom(taskElement, listId) {
@@ -461,7 +744,128 @@
             }
         }
 
+        function setRandomrobotImage() {
+            const randomNumber = Math.floor(Math.random() * 4) + 1; 
+            const imagePath = `images/Robot${randomNumber}.png`;
+            document.getElementById('robotImage').src = imagePath;
+        }
+
+        function cleanupCompletedTasks(listId) {
+            const list = document.getElementById(listId);
+            let completedCount = 0;
+
+            Array.from(list.children).forEach(li => {
+                if (li.querySelector('.custom-checkbox').classList.contains('checked')) {
+                    li.remove();
+                    completedCount++;
+                }
+            });
+
+            updatePositionsAfterMove(list);
+            saveToLocalStorage();
+            updateProgress(listId, listId === 'workList' ? 'workProgress' : 'healthProgress', 
+                           listId === 'workList' ? 'workProgressRing' : 'healthProgressRing');
+            updateCleanupButtonVisibility();
+
+            showCelebrationPopup(completedCount);
+        }
+
+        document.getElementById('cleanupWorkTasks').addEventListener('click', () => cleanupCompletedTasks('workList'));
+        document.getElementById('cleanupHealthGoals').addEventListener('click', () => cleanupCompletedTasks('healthList'));
+
+        function showCelebrationPopup(completedCount) {
+            const popup = document.createElement('div');
+            popup.className = 'fixed inset-0 frosted-glass-overlay flex items-center justify-center z-50';
+            popup.innerHTML = `
+                <div class="popup-content sm:p-12 p-8 mx-4 sm:mx-0 max-w-md w-full text-center relative overflow-hidden transform scale-0 transition-transform duration-300">
+                    <h2 class="text-2xl font-bold mb-3 -mt-2">Task Execution Successful!</h2>
+                    <p class="mb-8">Beep boop! You've completed ${completedCount} task${completedCount !== 1 ? 's' : ''}! This unit is awarding you ${completedCount} intrinsify-point${completedCount !== 1 ? 's' : ''}.</p>
+                    <div id="pointContainer" class="flex justify-center mb-4 space-x-2"></div>
+                    <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto floating-robot">
+                    <button id="closePopup" class="bg-input-bg hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">
+                        Thank you, Robot!
+                    </button>
+                    <div class="absolute inset-0 pointer-events-none">
+                        <canvas id="confettiCanvas"></canvas>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(popup);
+
+            // Trigger reflow to ensure the initial state is rendered before adding the scale
+            popup.offsetHeight;
+
+            // Scale up the popup
+            setTimeout(() => {
+                popup.firstElementChild.style.transform = 'scale(1)';
+            }, 10);
+
+            const pointContainer = popup.querySelector('#pointContainer');
+            const pointSVG = `<svg height="28" width="28" viewBox="295 -1 58 59" xmlns="http://www.w3.org/2000/svg"><path d="m300.4 0h46.5q.8 0 1.6.3.7.4 1.3.9.6.6.9 1.4.3.8.3 1.6v47.1q0 .9-.3 1.6-.3.8-.9 1.4-.6.5-1.3.9-.8.3-1.6.3h-46.5q-.9 0-1.6-.3-.8-.4-1.3-.9-.6-.6-.9-1.4-.3-.7-.3-1.5v-47.2q0-.8.3-1.6.3-.8.8-1.4.6-.5 1.4-.9.7-.3 1.6-.3z" fill="#f2ba4f"/><g fill="#fff"><path d="m331 46.7h-14.8q-.2 0-.3-.1-.1 0-.3-.1-.1-.1-.2-.2-.1-.1-.2-.3 0-.1-.1-.3 0-.1 0-.3 0-.1.1-.2l5.5-21.7q0-.2.2-.4.1-.2.2-.3.2-.2.4-.3.2 0 .4 0h3.7q.2 0 .4 0 .2.1.3.3.2.1.3.3.1.2.2.4l5.6 21.7q.1.1.1.2 0 .2-.1.3 0 .2 0 .3-.1.2-.2.3-.1.1-.2.2-.1.1-.2.1-.2.1-.3.1-.1.1-.3.1m-13.2-2.6h11.6l-5-19.1h-1.7z"/><path d="m323.6 19.3c-2.2 0-4.1-1.2-4.9-3.2-.9-2-.4-4.2 1.1-5.8 1.5-1.5 3.7-1.9 5.7-1.1s3.3 2.7 3.3 4.8q0 1.1-.4 2-.4 1-1.1 1.8-.8.7-1.7 1.1-1 .4-2 .4zm0-8c-1.1 0-2.1.6-2.5 1.6s-.2 2.2.5 3c.8.7 2 1 3 .6s1.6-1.4 1.6-2.5q0-.5-.2-1-.2-.5-.5-.9-.4-.4-.9-.6-.5-.2-1-.2z"/></g></svg>`;
+
+            for (let i = 0; i < completedCount; i++) {
+                const point = document.createElement('div');
+                point.innerHTML = pointSVG;
+                point.firstChild.style.fill = '#ccc';
+                point.style.transform = 'scale(0)';
+                point.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                pointContainer.appendChild(point);
+
+                setTimeout(() => {
+                    point.style.transform = 'scale(1)';
+                    point.firstChild.style.fill = '#FFA500';
+                }, i * 200);
+            }
+
+            // Confetti animation
+            const confettiCanvas = popup.querySelector('#confettiCanvas');
+            const myConfetti = confetti.create(confettiCanvas, { resize: true });
+            myConfetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            function closePopup() {
+                popup.firstElementChild.style.transform = 'scale(0)';
+                setTimeout(() => {
+                    popup.remove();
+                }, 300);
+            }
+
+            popup.querySelector('#closePopup').addEventListener('click', closePopup);
+            popup.addEventListener('click', (e) => {
+                if (e.target === popup) {
+                    closePopup();
+                }
+            });
+        }
+
+        function updateTaskStatus() {
+            updateProgress('workList', 'workProgress', 'workProgressRing');
+            updateProgress('healthList', 'healthProgress', 'healthProgressRing');
+            updateCleanupButtonVisibility();
+            saveToLocalStorage();
+        }
+
+        function updateCleanupButtonVisibility() {
+            const workList = document.getElementById('workList');
+            const healthList = document.getElementById('healthList');
+            const cleanupWorkButton = document.getElementById('cleanupWorkTasks');
+            const cleanupHealthButton = document.getElementById('cleanupHealthGoals');
+            
+            const hasCompletedWorkTasks = Array.from(workList.children)
+                .some(li => li.querySelector('.custom-checkbox').classList.contains('checked'));
+            const hasCompletedHealthGoals = Array.from(healthList.children)
+                .some(li => li.querySelector('.custom-checkbox').classList.contains('checked'));
+            
+            cleanupWorkButton.classList.toggle('hidden', !hasCompletedWorkTasks);
+            cleanupHealthButton.classList.toggle('hidden', !hasCompletedHealthGoals);
+        }
+
         window.addEventListener('load', () => {
+            setRandomrobotImage();
             loadFromLocalStorage();
             initSortable(); // Initialize Sortable after loading items
         });
