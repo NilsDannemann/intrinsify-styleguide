@@ -111,6 +111,12 @@
             transform-origin: right center;
             border-radius: 25px;
         }
+        @media (max-width: 767px) {
+            .speech-bubble {
+                max-width: 190px;
+            }
+        }
+
         .speech-bubble.show {
             opacity: 1;
             transform: translateY(-50%) scale(1);
@@ -225,7 +231,7 @@
 <body class="bg-page-bg p-4 md:p-8">
     <h1 class="text-4xl sm:text-6xl opacity-5 absolute left-0 right-0 font-bold mb-6 text-center">intrinsify Day Planner</h1>
     
-    <div class="max-w-container mx-auto mb-4 sm:mb-6 mt-2 sm:mt-0 pr-2 sm:pr-0">
+    <div class="max-w-container mx-auto mb-4 sm:mb-6 mt-2 sm:mt-0">
         <div class="w-32 ml-auto sm:m-auto relative">
             <div id="speechBubble" class="speech-bubble hidden"></div>
             <img id="robotImage" src="images/RobotEmpty.png" alt="Cute Robot" class="h-24 max-w-32 object-contain object-bottom w-auto m-auto floating-robot">
