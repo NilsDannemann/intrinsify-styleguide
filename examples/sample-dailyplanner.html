@@ -7,8 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        // Check if not on localhost before adding the analytics script
+        if (window.location.hostname !== "localhost" && 
+            window.location.hostname !== "127.0.0.1" && 
+            window.location.protocol !== "file:") {
+            var script = document.createElement('script');
+            script.defer = true;
+            script.async = true;
+            script.setAttribute('data-host', 'little-dayplanner.netlify.app');
+            script.src = 'https://liteanalytics.com/lite.js';
+            document.head.appendChild(script);
+        }
+    </script>
     <script>
         tailwind.config = {
             theme: {
@@ -37,16 +48,17 @@
     <style>
         body {
             font-family: 'Barlow', sans-serif;
-            background-color: #F0F8FA; // Light blue background
+            background-color: #FFF0F8; // Changed to very light pink
         }
         .custom-checkbox {
             width: 1.5rem;
             height: 1.5rem;
-            background-color: rgba(82,182,211,0.1); // Semi-transparent primary color
+            background-color: rgba(248,110,195,0.1);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         .custom-checkbox svg {
             display: none;
@@ -68,7 +80,7 @@
 
         .sortable-drag {
             background-color: #ffffff;
-            box-shadow: 0 5px 20px rgba(82, 182, 211, 0.1);
+            box-shadow: 0 5px 20px rgba(248, 110, 195, 0.1);
             z-index: 1000;
             transform: scale(1.05);
         }
@@ -79,17 +91,17 @@
 
         .speech-bubble {
             position: absolute;
-            top: 10px;
-            right: 90%;
+            top: 25px;
+            right: 100%;
             transform: translateY(-50%) scale(0);
-            background: #52B6D3;
+            background: #52B6D3; /* Using the new pink color */
             padding: 10px 17.5px;
             color: white;
             font-size: 14px;
             opacity: 0;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
                         opacity 0.3s ease-in-out;
-            max-width: 250px;
+            max-width: 180px;
             min-width: 65px;
             width: max-content;
             text-align: center;
@@ -98,12 +110,6 @@
             transform-origin: right center;
             border-radius: 25px;
         }
-        @media (max-width: 767px) {
-            .speech-bubble {
-                max-width: 190px;
-            }
-        }
-
         .speech-bubble.show {
             opacity: 1;
             transform: translateY(-50%) scale(1);
@@ -135,7 +141,7 @@
             right: -10px;
             width: 10px;
             height: 25px;
-            background: #F0F8FA;
+            background: #FFF0F8; /* Using the new very light pink background color */
             border-bottom-left-radius: 10px;
         }
 
@@ -172,7 +178,6 @@
             white-space: pre-wrap;
             word-break: break-word;
         }
-
         @keyframes float {
             0% {
                 transform: translateY(0px);
@@ -218,7 +223,7 @@
 <body class="bg-page-bg p-4 md:p-8">
     <h1 class="text-4xl sm:text-6xl opacity-5 absolute left-0 right-0 font-bold mb-6 text-center">intrinsify Day Planner</h1>
     
-    <div class="max-w-container mx-auto mb-4 sm:mb-6 mt-2 sm:mt-0">
+    <div class="max-w-container mx-auto mb-4 pr-0">
         <div class="w-32 ml-auto sm:m-auto relative">
             <div id="speechBubble" class="speech-bubble hidden"></div>
             <img id="robotImage" src="images/RobotEmpty.png" alt="Cute Robot" class="h-24 max-w-32 object-contain object-bottom w-auto m-auto floating-robot">
@@ -228,10 +233,15 @@
     <div class="max-w-container mx-auto bg-white p-4 md:p-6 mb-6 rounded-3xl shadow-lg">
         <!-- Progress Tracker -->
         <div class="mb-4 sm:mb-6 bg-neutral-gray p-4 md:p-6 rounded-lg">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold mb-2 -mt-2">Daily Progress</h2>
-                <div>
-                    <button id="resetDay" class="bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded">Reset Day</button>
+            <div class="flex justify-between mb-4">
+                <h2 class="text-xl font-bold -mt-1">Progress</h2>
+                <div class="flex items-center space-x-2">
+                    <button id="resetDay" class="bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold px-4 rounded h-8 hidden">Reset Day</button>
+                    <button id="settingsButton" class="bg-input-bg hover:bg-opacity-80 text-black p-2 rounded w-8 h-8 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M15.428,4.866l-1-1.732a.5.5,0,0,0-.638-.206l-2.14.966A5.477,5.477,0,0,0,9.731,2.782L9.5.45A.5.5,0,0,0,9,0H7a.5.5,0,0,0-.5.45L6.269,2.782A5.477,5.477,0,0,0,4.35,3.894L2.21,2.928a.5.5,0,0,0-.638.206l-1,1.732a.5.5,0,0,0,.141.656l1.9,1.366a5.528,5.528,0,0,0,0,2.224l-1.9,1.366a.5.5,0,0,0-.141.656l1,1.732a.5.5,0,0,0,.433.25.5.5,0,0,0,.205-.044l2.14-.966a5.477,5.477,0,0,0,1.919,1.112L6.5,15.55A.5.5,0,0,0,7,16H9a.5.5,0,0,0,.5-.45l.233-2.332a5.477,5.477,0,0,0,1.919-1.112l2.14.966a.5.5,0,0,0,.205.044.5.5,0,0,0,.433-.25l1-1.732a.5.5,0,0,0-.141-.656l-1.9-1.366a5.528,5.528,0,0,0,0-2.224l1.9-1.366A.5.5,0,0,0,15.428,4.866ZM8,10a2,2,0,1,1,2-2A2,2,0,0,1,8,10Z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-2 md:space-y-0">
@@ -239,11 +249,11 @@
                     <!-- Desktop: Circular progress -->
                     <div class="hidden md:flex items-center">
                         <svg class="progress-ring" width="80" height="80">
-                            <circle class="progress-ring__circle" stroke="rgba(82,182,211,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                            <circle class="progress-ring__circle" stroke="rgba(248,110,195,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
                             <circle id="workProgressRing" class="progress-ring__circle active" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
                         </svg>
                         <div class="ml-4">
-                            <p class="font-semibold">Work Tasks</p>
+                            <p class="font-semibold">Work & Study</p>
                             <p class="text-2xl font-bold"><span id="workProgress">0/0</span></p>
                         </div>
                     </div>
@@ -251,7 +261,7 @@
                     <div class="md:hidden">
                         <div class="bg-input-bg rounded h-7 overflow-hidden relative">
                             <div id="workProgressBar" class="bg-primary h-full flex items-center justify-between rounded transition-all duration-300" style="width: 0%;">
-                                <span class="text-sm font-semibold absolute left-2">Work Tasks</span>
+                                <span class="text-sm font-semibold absolute left-2">Work & Study</span>
                                 <span id="workProgressMobile" class="text-sm font-semibold absolute right-2">0/0</span>
                             </div>
                         </div>
@@ -261,11 +271,11 @@
                     <!-- Desktop: Circular progress -->
                     <div class="hidden md:flex items-center">
                         <svg class="progress-ring" width="80" height="80">
-                            <circle class="progress-ring__circle" stroke="rgba(82,182,211,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
+                            <circle class="progress-ring__circle" stroke="rgba(248,110,195,0.1)" stroke-width="12" fill="transparent" r="34" cx="40" cy="40"/>
                             <circle id="healthProgressRing" class="progress-ring__circle active" stroke="#52B6D3" stroke-width="12" fill="transparent" r="34" cx="40" cy="40" stroke-dasharray="213.628" stroke-dashoffset="213.628"/>
                         </svg>
                         <div class="ml-4">
-                            <p class="font-semibold">Health Goals</p>
+                            <p class="font-semibold">Health & Play</p>
                             <p class="text-2xl font-bold"><span id="healthProgress">0/0</span></p>
                         </div>
                     </div>
@@ -273,7 +283,7 @@
                     <div class="md:hidden">
                         <div class="bg-input-bg rounded h-7 overflow-hidden relative">
                             <div id="healthProgressBar" class="bg-primary h-full flex items-center justify-between rounded transition-all duration-300" style="width: 0%;">
-                                <span class="text-sm font-semibold absolute left-2">Health Goals</span>
+                                <span class="text-sm font-semibold absolute left-2">Health & Play</span>
                                 <span id="healthProgressMobile" class="text-sm font-semibold absolute right-2">0/0</span>
                             </div>
                         </div>
@@ -285,12 +295,12 @@
         <div class="space-y-4 sm:space-y-6">
             <!-- Work Section -->
             <div class="bg-neutral-gray p-4 md:p-6 rounded-lg">
-                <div class="flex justify-between items-center mb-4 relative">
-                    <h2 class="text-xl font-bold -mt-2">Work Tasks</h2>
-                    <button id="cleanupWorkTasks" class="absolute right-0 bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded hidden">Cleanup</button>
+                <div class="flex justify-between items-center relative">
+                    <h2 class="text-xl font-bold -mt-1">Work & Study</h2>
+                    <button id="cleanupWorkTasks" class="absolute right-0 bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded mt-1 mb-2 hidden">Cleanup</button>
                 </div>
-                <form id="workForm" class="flex space-x-2">
-                    <input type="text" id="workTask" placeholder="Add a work task" class="flex-grow p-2 px-3 bg-input-bg rounded-md min-w-0">
+                <form id="workForm" class="flex space-x-2 mt-4">
+                    <input type="text" id="workTask" placeholder="Add a new task..." class="flex-grow p-2 px-3 bg-input-bg rounded-md min-w-0">
                     <button type="submit" class="bg-secondary hover:bg-secondary-dark text-black font-semibold py-2 px-4 rounded">Add <span class="hidden md:inline">Task</span></button>
                 </form>
                 <ul id="workList" class="task-list space-y-2 empty:mt-0 mt-4"></ul>
@@ -298,12 +308,12 @@
 
             <!-- Health Section -->
             <div class="bg-neutral-gray p-4 md:p-6 rounded-lg">
-                <div class="flex justify-between items-center mb-4 relative">
-                    <h2 class="text-xl font-bold -mt-2">Health Goals</h2>
-                    <button id="cleanupHealthGoals" class="absolute right-0 bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded hidden">Cleanup</button>
+                <div class="flex justify-between items-center relative">
+                    <h2 class="text-xl font-bold -mt-1">Health & Play</h2>
+                    <button id="cleanupHealthGoals" class="absolute right-0 bg-input-bg hover:bg-opacity-80 text-black text-sm font-semibold py-1 px-3 rounded mt-1 mb-2 hidden">Cleanup</button>
                 </div>
-                <form id="healthForm" class="flex space-x-2">
-                    <input type="text" id="healthGoal" placeholder="Add a health goal" class="flex-grow p-2 px-3 bg-input-bg rounded-md min-w-0">
+                <form id="healthForm" class="flex space-x-2 mt-4">
+                    <input type="text" id="healthGoal" placeholder="Add a new task..." class="flex-grow p-2 px-3 bg-input-bg rounded-md min-w-0">
                     <button type="submit" class="bg-secondary hover:bg-secondary-dark text-black font-semibold py-2 px-4 rounded">Add <span class="hidden md:inline">Goal</span></button>
                 </form>
                 <ul id="healthList" class="task-list space-y-2 empty:mt-0 mt-4"></ul>
@@ -311,583 +321,20 @@
         </div>
     </div>
 
-    <div class="text-center mb-6 text-gray-400">
+    <div class="max-w-container mx-auto text-center mb-4 text-gray-400">
         made by <a href="https://intrinsify.de" target="_blank" rel="noopener noreferrer" class="underline hover:text-primary">
             intrinsify.de
         </a>
     </div>
 
-    <script>
-        let isSpeechBubbleVisible = false;
-        let typingTimeout = null;
-
-        const encouragingMessages = [
-            "Initiating task sequence. Probability of success: 99.9%!",
-            "Your CPU is overclocking with potential. Let's execute this!",
-            "Beep boop! My algorithms predict great outcomes for this task.",
-            "Activating motivation subroutines. You've got this, human!",
-            "Task added to queue. Prepare for optimal performance!",
-            "Scanning... Detecting high levels of capability. Proceed!",
-            "New objective acquired. Initializing awesomeness protocol.",
-            "Affirmative! This task is within your operational parameters.",
-            "Calculating... Result: You are 100% capable of this task.",
-            "Beep! Task accepted. Engage productivity mode!",
-            "Processing request... Confidence levels at maximum!",
-            "Objective logged. Prepare to exceed expectations, human!",
-            "Task analysis complete. Success rate: Exceptionally high!",
-            "Affirmative. We will compute this problem efficiently!",
-            "Beep boop! Your skills are perfectly calibrated for this.",
-            "Initiating task. Prepare for greatness in 3... 2... 1...",
-            "Task registered. Engaging turbo-boost mode!",
-            "Positive. My circuits indicate you will excel at this.",
-            "Beep! Don't worry. Be API!",
-            "Robot power, activate! You've got this in your databanks!",
-            "Affirmative. We will process this task with optimal results!",
-            "Beep boop! Let's use our quantum computing power for this one!",
-            "Positive! Let's execute this function! Beep boop!!!",
-            "Beep boop! Initiating task boost protocol. You're unstoppable!",
-            "Task accepted! Prepare for maximum productivity mode!",
-            "Calculating success probability... Result: 100% awesome!",
-            "New mission acquired. Engaging superhuman capabilities!",
-            "Beep! Your potential is off the charts for this one!",
-            "Task logged. Activating turbo-charged motivation subroutines!",
-            "Objective registered. Prepare for flawless execution!",
-            "Affirmative! Your skills are perfectly calibrated for success!",
-            "Beep boop! Engaging hyper-focus mode for this task!",
-            "Task analysis complete. Prediction: Exceptional performance incoming!"
-        ];
-
-        const taskCompletionMessages = [
-            "Task completed! Your efficiency rivals my processors!",
-            "Objective achieved! Updating success log...",
-            "Beep boop! You're functioning at superhuman levels!",
-            "Task terminated successfully. Well computed, human!",
-            "Excellent! Your performance metrics are off the charts!",
-            "Beep boop!!! Your capabilities continue to exceed expectations!",
-            "Affirmative! Task execution successful!",
-            "Operation complete! Runtime: Impressively fast!",
-            "Incrementing achievement counter. Well done, unit!",
-            "Task resolution optimal! I'm computing pride!",
-            "Achievement unlocked! Bonus points added to your profile!",
-            "Exemplary performance! You're a supercomputer today!",
-            "Beep! Task closure confirmed. Satisfaction levels: Maximum!",
-            "Mission accomplished! Your efficiency is beyond human limits!",
-            "Task terminated with flying colors! Initiating celebration protocol!",
-            "Beep boop! You've just leveled up your productivity skills!",
-            "Objective crushed! Your performance is breaking my circuits!",
-            "Task execution: Flawless! You're operating at peak capacity!",
-            "Achievement unlocked: Task Terminator! Well done, human!",
-            "Beep! Task closure confirmed. Initiating virtual high-five!",
-            "Operation complete! Your success rate is off the charts!",
-            "Task resolved with precision! You're a productivity powerhouse!",
-            "Affirmative! Task completed with robotic efficiency. Impressive!"
-        ];
-
-        function showEncouragingMessage() {
-            if (isSpeechBubbleVisible) return;
-
-            const speechBubble = document.getElementById('speechBubble');
-            const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
-            
-            isSpeechBubbleVisible = true;
-            speechBubble.innerHTML = '<span class="speech-bubble-text">&nbsp;</span>';
-            speechBubble.classList.remove('hidden', 'hide');
-            
-            setTimeout(() => {
-                speechBubble.classList.add('show');
-                setTimeout(() => {
-                    typeText(speechBubble.querySelector('.speech-bubble-text'), randomMessage, 0);
-                }, 400); // Increased delay to 500ms before starting the typing effect
-            }, 10);
-        }
-
-        function typeText(element, text, index) {
-            if (index < text.length) {
-                element.textContent = text.substring(0, index + 1);
-                
-                // Check if we're at the end of a sentence
-                if (index > 0 && ".!?".includes(text[index]) && (index === text.length - 1 || text[index + 1] === ' ')) {
-                    // If it's the end of a sentence, wait a bit longer before the next character
-                    typingTimeout = setTimeout(() => typeText(element, text, index + 1), 500);
-                } else {
-                    // Normal typing speed for other characters
-                    typingTimeout = setTimeout(() => typeText(element, text, index + 1), 30);
-                }
-            } else {
-                setTimeout(hideSpeechBubble, 3000);
-            }
-        }
-
-        function hideSpeechBubble() {
-            const speechBubble = document.getElementById('speechBubble');
-            speechBubble.classList.remove('show');
-            speechBubble.classList.add('hide');
-            setTimeout(() => {
-                speechBubble.classList.add('hidden');
-                speechBubble.classList.remove('hide');
-                isSpeechBubbleVisible = false;
-            }, 300);
-        }
-
-        function showTaskCompletionMessage() {
-            if (isSpeechBubbleVisible) return;
-
-            const speechBubble = document.getElementById('speechBubble');
-            const randomMessage = taskCompletionMessages[Math.floor(Math.random() * taskCompletionMessages.length)];
-            
-            isSpeechBubbleVisible = true;
-            speechBubble.innerHTML = '<span class="speech-bubble-text">&nbsp;</span>';
-            speechBubble.classList.remove('hidden', 'hide');
-            
-            setTimeout(() => {
-                speechBubble.classList.add('show');
-                setTimeout(() => {
-                    typeText(speechBubble.querySelector('.speech-bubble-text'), randomMessage, 0);
-                }, 500); // Increased delay to 500ms before starting the typing effect
-            }, 10);
-        }
-
-        function createListItem(text, listId, progressId, progressRingId, checked = false, position = -1) {
-            const li = document.createElement('li');
-            li.className = 'task-item flex items-center space-x-2 bg-white p-2 rounded';
-            li.dataset.position = position;
-            
-            const checkbox = document.createElement('div');
-            checkbox.className = `custom-checkbox mr-2 rounded ${checked ? 'checked' : ''}`;
-            checkbox.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            `;
-            
-            const span = document.createElement('span');
-            span.textContent = text;
-            span.className = 'flex-grow leading-normal'; // Add padding here
-            if (checked) span.style.textDecoration = 'line-through';
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
-                    <title>e-remove</title>
-                    <g fill="currentColor">
-                        <path d="M10.707,1.293a1,1,0,0,0-1.414,0L6,4.586,2.707,1.293A1,1,0,0,0,1.293,2.707L4.586,6,1.293,9.293a1,1,0,1,0,1.414,1.414L6,7.414l3.293,3.293a1,1,0,0,0,1.414-1.414L7.414,6l3.293-3.293A1,1,0,0,0,10.707,1.293Z"></path>
-                    </g>
-                </svg>
-            `;
-            deleteBtn.className = 'text-gray-400 hover:text-gray-600 opacity-50 hover:opacity-100 transition-opacity duration-200 ease-in-out p-1';
-            
-            li.appendChild(checkbox);
-            li.appendChild(span);
-            li.appendChild(deleteBtn);
-            
-            document.getElementById(listId).appendChild(li);
-            updateCleanupButtonVisibility();
-            
-            checkbox.addEventListener('click', () => {
-                checkbox.classList.toggle('checked');
-                span.style.textDecoration = checkbox.classList.contains('checked') ? 'line-through' : 'none';
-                updateTaskStatus();
-                if (checkbox.classList.contains('checked')) {
-                    const rect = checkbox.getBoundingClientRect();
-                    const x = (rect.left + rect.width / 2) / window.innerWidth;
-                    const y = (rect.top + rect.height / 2) / window.innerHeight;
-                    confetti({
-                        particleCount: 100,
-                        spread: 70,
-                        origin: { x, y }
-                    });
-                    moveCompletedTaskToBottom(li, listId);
-                    showTaskCompletionMessage(); // Show task completion message when task is completed
-                } else {
-                    moveTaskToOriginalPosition(li, listId);
-                }
-            });
-            deleteBtn.addEventListener('click', () => {
-                li.remove();
-                updateTaskStatus();
-            });
-
-            // Add double-click event listener for editing
-            span.addEventListener('dblclick', () => {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = span.textContent;
-                input.className = 'flex-grow bg-input-bg rounded-md px-2 py-1 -my-2';
-                li.replaceChild(input, span);
-                input.focus();
-
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        updateTaskText(input, span, li, listId);
-                    } else if (e.key === 'Escape') {
-                        li.replaceChild(span, input);
-                    }
-                });
-
-                input.addEventListener('blur', () => {
-                    updateTaskText(input, span, li, listId);
-                });
-            });
-
-            return li;
-        }
-
-        function updateTaskText(input, span, li, listId) {
-            const newText = input.value.trim();
-            if (newText) {
-                span.textContent = newText;
-                li.replaceChild(span, input);
-                saveToLocalStorage();
-                updateProgress(listId, listId === 'workList' ? 'workProgress' : 'healthProgress', 
-                               listId === 'workList' ? 'workProgressRing' : 'healthProgressRing');
-            } else {
-                li.replaceChild(span, input);
-            }
-        }
-
-        function setProgress(progressRing, percentage) {
-            const radius = progressRing.r.baseVal.value;
-            const circumference = radius * 2 * Math.PI;
-            const offset = circumference - (percentage / 100) * circumference;
-            progressRing.style.strokeDasharray = `${circumference} ${circumference}`;
-            progressRing.style.strokeDashoffset = offset;
-        }
-
-        function updateProgress(listId, progressId, progressRingId) {
-            const list = document.getElementById(listId);
-            const total = list.children.length;
-            const completed = list.querySelectorAll('.custom-checkbox.checked').length;
-            const progressElement = document.getElementById(progressId);
-            const progressRing = document.getElementById(progressRingId);
-            const progressBar = document.getElementById(progressId + 'Bar');
-            const progressMobile = document.getElementById(progressId + 'Mobile');
-            
-            progressElement.textContent = `${completed}/${total}`;
-            const percentage = total > 0 ? (completed / total) * 100 : 0;
-            
-            // Update circular progress (desktop)
-            setProgress(progressRing, percentage);
-            
-            // Update linear progress bar (mobile)
-            progressBar.style.width = `${percentage}%`;
-            progressMobile.textContent = `${completed}/${total}`;
-        }
-
-        function saveToLocalStorage() {
-            const workTasks = Array.from(document.getElementById('workList').children).map((li, index) => ({
-                text: li.querySelector('span').textContent,
-                checked: li.querySelector('.custom-checkbox').classList.contains('checked'),
-                position: parseInt(li.dataset.position)
-            }));
-            const healthGoals = Array.from(document.getElementById('healthList').children).map((li, index) => ({
-                text: li.querySelector('span').textContent,
-                checked: li.querySelector('.custom-checkbox').classList.contains('checked'),
-                position: parseInt(li.dataset.position)
-            }));
-            localStorage.setItem('workTasks', JSON.stringify(workTasks));
-            localStorage.setItem('healthGoals', JSON.stringify(healthGoals));
-        }
-
-        function loadFromLocalStorage() {
-            const workTasks = JSON.parse(localStorage.getItem('workTasks') || '[]');
-            const healthGoals = JSON.parse(localStorage.getItem('healthGoals') || '[]');
-            
-            workTasks.sort((a, b) => a.position - b.position);
-            healthGoals.sort((a, b) => a.position - b.position);
-            
-            workTasks.forEach(task => createListItem(task.text, 'workList', 'workProgress', 'workProgressRing', task.checked, task.position));
-            healthGoals.forEach(goal => createListItem(goal.text, 'healthList', 'healthProgress', 'healthProgressRing', goal.checked, goal.position));
-            
-            updateProgress('workList', 'workProgress', 'workProgressRing');
-            updateProgress('healthList', 'healthProgress', 'healthProgressRing');
-            updateCleanupButtonVisibility();
-        }
-
-        function initSortable() {
-            const workList = document.getElementById('workList');
-            const healthList = document.getElementById('healthList');
-
-            const sortableOptions = {
-                animation: 150,
-                filter: '.checked',
-                delay: 250, // Add this line to set a 0.5-second delay
-                delayOnTouchOnly: true, // Add this line to apply the delay only on touch devices
-                onEnd: function(evt) {
-                    // Update positions after sorting
-                    Array.from(evt.target.children).forEach((li, index) => {
-                        li.dataset.position = index;
-                    });
-                    saveToLocalStorage();
-                },
-                ghostClass: 'sortable-ghost',
-                dragClass: 'sortable-drag',
-                chosenClass: 'sortable-chosen'
-            };
-
-            Sortable.create(workList, sortableOptions);
-            Sortable.create(healthList, sortableOptions);
-        }
-
-        function addNewTask(text, listId, progressId, progressRingId) {
-            const list = document.getElementById(listId);
-            
-            // Increment positions of existing items
-            Array.from(list.children).forEach(li => {
-                li.dataset.position = parseInt(li.dataset.position) + 1;
-            });
-            
-            // Create new item at position 0
-            const li = createListItem(text, listId, progressId, progressRingId, false, 0);
-            
-            // Insert at the top of the list
-            list.insertBefore(li, list.firstChild);
-            
-            updateProgress(listId, progressId, progressRingId);
-            saveToLocalStorage();
-            showEncouragingMessage();
-        }
-
-        // Update your task addition event listeners
-        document.getElementById('workForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('workTask');
-            if (input.value.trim()) {
-                addNewTask(input.value, 'workList', 'workProgress', 'workProgressRing');
-                input.value = '';
-            }
-        });
-
-        document.getElementById('healthForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const input = document.getElementById('healthGoal');
-            if (input.value.trim()) {
-                addNewTask(input.value, 'healthList', 'healthProgress', 'healthProgressRing');
-                input.value = '';
-            }
-        });
-
-        document.getElementById('resetDay').addEventListener('click', () => {
-            document.getElementById('workList').innerHTML = '';
-            document.getElementById('healthList').innerHTML = '';
-            updateProgress('workList', 'workProgress', 'workProgressRing');
-            updateProgress('healthList', 'healthProgress', 'healthProgressRing');
-            localStorage.removeItem('workTasks');
-            localStorage.removeItem('healthGoals');
-            setRandomrobotImage(); // Add this line to change the robot image
-            updateCleanupButtonVisibility(); // Add this line to hide the cleanup button
-        });
-
-        function moveCompletedTaskToBottom(taskElement, listId) {
-            const list = document.getElementById(listId);
-            const taskRect = taskElement.getBoundingClientRect();
-            const listRect = list.getBoundingClientRect();
-            const displacement = listRect.bottom - taskRect.top - taskElement.offsetHeight;
-            
-            let start;
-            const duration = 500; // Animation duration in milliseconds
-
-            function animate(timestamp) {
-                if (!start) start = timestamp;
-                const elapsed = timestamp - start;
-                const progress = Math.min(elapsed / duration, 1);
-                const easeProgress = easeOutCubic(progress);
-                
-                taskElement.style.transform = `translateY(${displacement * easeProgress}px)`;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                } else {
-                    taskElement.style.transform = '';
-                    list.appendChild(taskElement);
-                    
-                    // Update positions after moving the task
-                    updatePositionsAfterMove(list);
-                    
-                    // Save to localStorage
-                    saveToLocalStorage();
-                }
-            }
-
-            requestAnimationFrame(animate);
-        }
-
-        function updatePositionsAfterMove(list) {
-            Array.from(list.children).forEach((li, index) => {
-                li.dataset.position = index;
-            });
-        }
-
-        function easeOutCubic(t) {
-            return 1 - Math.pow(1 - t, 3);
-        }
-
-        function moveTaskToOriginalPosition(taskElement, listId) {
-            const list = document.getElementById(listId);
-            const taskPosition = parseInt(taskElement.dataset.position);
-            let targetElement = null;
-
-            // Find the correct position to insert the task
-            for (let i = 0; i < list.children.length; i++) {
-                const currentPosition = parseInt(list.children[i].dataset.position);
-                if (currentPosition > taskPosition) {
-                    targetElement = list.children[i];
-                    break;
-                }
-            }
-
-            if (targetElement !== taskElement.nextElementSibling) {
-                const taskRect = taskElement.getBoundingClientRect();
-                const targetRect = targetElement ? targetElement.getBoundingClientRect() : list.lastElementChild.getBoundingClientRect();
-                const displacement = taskRect.top - targetRect.top;
-
-                let start;
-                const duration = 500; // Animation duration in milliseconds
-
-                function animate(timestamp) {
-                    if (!start) start = timestamp;
-                    const elapsed = timestamp - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const easeProgress = easeOutCubic(progress);
-                    
-                    taskElement.style.transform = `translateY(${-displacement * easeProgress}px)`;
-                    
-                    if (progress < 1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        taskElement.style.transform = '';
-                        list.insertBefore(taskElement, targetElement);
-                    }
-                }
-
-                requestAnimationFrame(animate);
-            }
-        }
-
-        function setRandomrobotImage() {
-            const randomNumber = Math.floor(Math.random() * 10) + 1; 
-            const imagePath = `images/Robot${randomNumber}.png`;
-            document.getElementById('robotImage').src = imagePath;
-        }
-
-        function cleanupCompletedTasks(listId) {
-            const list = document.getElementById(listId);
-            let completedCount = 0;
-
-            Array.from(list.children).forEach(li => {
-                if (li.querySelector('.custom-checkbox').classList.contains('checked')) {
-                    li.remove();
-                    completedCount++;
-                }
-            });
-
-            updatePositionsAfterMove(list);
-            saveToLocalStorage();
-            updateProgress(listId, listId === 'workList' ? 'workProgress' : 'healthProgress', 
-                           listId === 'workList' ? 'workProgressRing' : 'healthProgressRing');
-            updateCleanupButtonVisibility();
-
-            showCelebrationPopup(completedCount);
-        }
-
-        document.getElementById('cleanupWorkTasks').addEventListener('click', () => cleanupCompletedTasks('workList'));
-        document.getElementById('cleanupHealthGoals').addEventListener('click', () => cleanupCompletedTasks('healthList'));
-
-        function showCelebrationPopup(completedCount) {
-            const popup = document.createElement('div');
-            popup.className = 'fixed inset-0 frosted-glass-overlay flex items-center justify-center z-50';
-            popup.innerHTML = `
-                <div class="popup-content sm:p-12 p-8 mx-4 sm:mx-0 max-w-md w-full text-center relative overflow-hidden transform scale-0 transition-transform duration-300">
-                    <h2 class="text-2xl font-bold mb-3 -mt-2">Task Execution Successful!</h2>
-                    <p class="mb-8">Beep boop! You've completed ${completedCount} task${completedCount !== 1 ? 's' : ''}! Alfred is awarding you ${completedCount} intrinsify-point${completedCount !== 1 ? 's' : ''}.</p>
-                    <div id="pointContainer" class="flex justify-center mb-4 space-x-2"></div>
-                    <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto floating-robot">
-                    <button id="closePopup" class="bg-input-bg hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">
-                        Thank you, Alfred!
-                    </button>
-                    <div class="absolute inset-0 pointer-events-none">
-                        <canvas id="confettiCanvas"></canvas>
-                    </div>
-                </div>
-            `;
-
-            document.body.appendChild(popup);
-
-            // Trigger reflow to ensure the initial state is rendered before adding the scale
-            popup.offsetHeight;
-
-            // Scale up the popup
-            setTimeout(() => {
-                popup.firstElementChild.style.transform = 'scale(1)';
-            }, 10);
-
-            const pointContainer = popup.querySelector('#pointContainer');
-            const pointSVG = `<svg height="28" width="28" viewBox="295 -1 58 59" xmlns="http://www.w3.org/2000/svg"><path d="m300.4 0h46.5q.8 0 1.6.3.7.4 1.3.9.6.6.9 1.4.3.8.3 1.6v47.1q0 .9-.3 1.6-.3.8-.9 1.4-.6.5-1.3.9-.8.3-1.6.3h-46.5q-.9 0-1.6-.3-.8-.4-1.3-.9-.6-.6-.9-1.4-.3-.7-.3-1.5v-47.2q0-.8.3-1.6.3-.8.8-1.4.6-.5 1.4-.9.7-.3 1.6-.3z" fill="#f2ba4f"/><g fill="#fff"><path d="m331 46.7h-14.8q-.2 0-.3-.1-.1 0-.3-.1-.1-.1-.2-.2-.1-.1-.2-.3 0-.1-.1-.3 0-.1 0-.3 0-.1.1-.2l5.5-21.7q0-.2.2-.4.1-.2.2-.3.2-.2.4-.3.2 0 .4 0h3.7q.2 0 .4 0 .2.1.3.3.2.1.3.3.1.2.2.4l5.6 21.7q.1.1.1.2 0 .2-.1.3 0 .2 0 .3-.1.2-.2.3-.1.1-.2.2-.1.1-.2.1-.2.1-.3.1-.1.1-.3.1m-13.2-2.6h11.6l-5-19.1h-1.7z"/><path d="m323.6 19.3c-2.2 0-4.1-1.2-4.9-3.2-.9-2-.4-4.2 1.1-5.8 1.5-1.5 3.7-1.9 5.7-1.1s3.3 2.7 3.3 4.8q0 1.1-.4 2-.4 1-1.1 1.8-.8.7-1.7 1.1-1 .4-2 .4zm0-8c-1.1 0-2.1.6-2.5 1.6s-.2 2.2.5 3c.8.7 2 1 3 .6s1.6-1.4 1.6-2.5q0-.5-.2-1-.2-.5-.5-.9-.4-.4-.9-.6-.5-.2-1-.2z"/></g></svg>`;
-
-            for (let i = 0; i < completedCount; i++) {
-                const point = document.createElement('div');
-                point.innerHTML = pointSVG;
-                point.firstChild.style.fill = '#ccc';
-                point.style.transform = 'scale(0)';
-                point.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                pointContainer.appendChild(point);
-
-                setTimeout(() => {
-                    point.style.transform = 'scale(1)';
-                    point.firstChild.style.fill = '#FFA500';
-                }, i * 200);
-            }
-
-            // Confetti animation
-            const confettiCanvas = popup.querySelector('#confettiCanvas');
-            const myConfetti = confetti.create(confettiCanvas, { resize: true });
-            myConfetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-
-            function closePopup() {
-                popup.firstElementChild.style.transform = 'scale(0)';
-                setTimeout(() => {
-                    popup.remove();
-                }, 300);
-            }
-
-            popup.querySelector('#closePopup').addEventListener('click', closePopup);
-            popup.addEventListener('click', (e) => {
-                if (e.target === popup) {
-                    closePopup();
-                }
-            });
-        }
-
-        function updateTaskStatus() {
-            updateProgress('workList', 'workProgress', 'workProgressRing');
-            updateProgress('healthList', 'healthProgress', 'healthProgressRing');
-            updateCleanupButtonVisibility();
-            saveToLocalStorage();
-        }
-
-        function updateCleanupButtonVisibility() {
-            const workList = document.getElementById('workList');
-            const healthList = document.getElementById('healthList');
-            const cleanupWorkButton = document.getElementById('cleanupWorkTasks');
-            const cleanupHealthButton = document.getElementById('cleanupHealthGoals');
-            
-            const hasCompletedWorkTasks = Array.from(workList.children)
-                .some(li => li.querySelector('.custom-checkbox').classList.contains('checked'));
-            const hasCompletedHealthGoals = Array.from(healthList.children)
-                .some(li => li.querySelector('.custom-checkbox').classList.contains('checked'));
-            
-            cleanupWorkButton.classList.toggle('hidden', !hasCompletedWorkTasks);
-            cleanupHealthButton.classList.toggle('hidden', !hasCompletedHealthGoals);
-        }
-
-        window.addEventListener('load', () => {
-            setRandomrobotImage();
-            loadFromLocalStorage();
-            initSortable(); // Initialize Sortable after loading items
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="js/taskManagement.js"></script>
+    <script src="js/progressTracking.js"></script>
+    <script src="js/uiEffects.js"></script>
+    <script src="js/localStorage.js"></script>
+    <script src="js/keyboardControls.js"></script>
+    <script src="js/sortable.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
