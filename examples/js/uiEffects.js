@@ -75,7 +75,7 @@ function showCelebrationPopup(completedCount) {
             <div id="pointContainer" class="flex justify-center mb-4 space-x-2"></div>
             <img src="images/RobotHappy.png" alt="Happy Robot" class="h-32 w-auto mb-8 m-auto floating-robot">
             <button id="closePopup" class="bg-input-bg hover:bg-opacity-80 text-black font-semibold py-2 px-4 rounded">
-                Thank you, Robot!
+                Thank you, Alfred!
             </button>
             <div class="absolute inset-0 pointer-events-none">
                 <canvas id="confettiCanvas"></canvas>
