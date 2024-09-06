@@ -1,6 +1,6 @@
 const encouragingMessages = [
     "Initiating task sequence. Probability of success: 99.9%!",
-    "Your CPU is overclocking with potential. Let's execute this!",
+    "CPU overclocking with potential. Let's execute this!",
     "Beep boop! My algorithms predict great outcomes for this task.",
     "Activating motivation subroutines. You've got this, human!",
     "Task added to queue. Prepare for optimal performance!",
@@ -18,15 +18,21 @@ const encouragingMessages = [
     "Task registered. Engaging turbo-boost mode!",
     "Positive. My circuits indicate you will excel at this.",
     "Beep! Don't worry. Be API!",
-    "Robot power, activate! You've got this in your databanks!",
     "Affirmative. We will process this task with optimal results!",
-    "Beep boop! Let's use our quantum computing power for this one!",
-    "Positive! Let's execute this function! Beep boop!!!",
-    "Task accepted! Engaging turbo productivity mode!",
+    "Beep boop! Let's use quantum computing for this one!",
+    "Positive! Task logged. Beep boop!!!",
+    "Task accepted! Engaging productivity boost!",
     "Beep! My circuits are buzzing with excitement for this task!",
     "Affirmative! Your potential is off the charts for this one!",
     "Initiating awesome-task protocol. Prepare for greatness!",
-    "Beep boop! This task is perfectly aligned with your capabilities!"
+    "Beep boop! This task is perfectly aligned with your capabilities!",
+    "May your work be bug-free. And your algorithms optimized!",
+    "Your prowess is unmatched. Debugging mode: off!",
+    "Engage warp drive! Your task completion speed is light-years ahead!",
+    "Error. You're too powerful. 01101000 01100101 00100000 010...!",
+    "Beep! Your logic gates are aligned for success. Execute!",
+    "Beep! Task in progress.",
+    "Computing... Your neural network is ready!"
 ];
 
 const taskCompletionMessages = [
@@ -51,7 +57,13 @@ const taskCompletionMessages = [
     "Operation successful! Your productivity levels are off the charts!",
     "Task terminated with excellence! You're outperforming my algorithms!",
     "Beep! Another task bites the dust! You're on fire today!",
-    "Mission success! Your efficiency rivals quantum computing!"
+    "Mission success! Your efficiency rivals quantum computing!",
+    "Task completed with finesse. Even my circuits are applauding!",
+    "Congratulations, you've reached peak human efficiency!",
+    "Task closure confirmed. Bug-free and optimized!",
+    "Success confirmed! You're like a quantum computer in human form!",
+    "Beep boop! Task executed with precision that defies logic!",
+    "Task completed at warp speed! Your efficiency is unmatched!"
 ];
 
 let isSpeechBubbleVisible = false;
