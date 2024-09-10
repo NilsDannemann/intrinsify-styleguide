@@ -8,19 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
     <script>
-        // Check if not on localhost before adding the analytics script
-        if (window.location.hostname !== "localhost" && 
-            window.location.hostname !== "127.0.0.1" && 
-            window.location.protocol !== "file:") {
-            var script = document.createElement('script');
-            script.defer = true;
-            script.async = true;
-            script.setAttribute('data-host', 'little-dayplanner.netlify.app');
-            script.src = 'https://liteanalytics.com/lite.js';
-            document.head.appendChild(script);
-        }
-    </script>
-    <script>
         tailwind.config = {
             theme: {
                 extend: {
