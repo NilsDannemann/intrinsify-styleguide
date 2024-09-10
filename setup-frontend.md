@@ -45,8 +45,15 @@ Border Color: #D0DFE4
 Font Family: 'Barlow', sans-serif
 Font Weight: 400
 Color: #000000
+Font Size Normal: 1.35rem
+Font Size Small: 1.15rem
 
-### Headings
+### Links
+Color: #000000
+Text Decoration: underline
+Text Decoration Underline Color: (use primary color)
+
+### Headings / Headlines / H1, H2, H3, H4, H5, H6
 Font Family: 'Barlow', sans-serif
 Font Weight: 700
 Color: #000000
@@ -60,5 +67,12 @@ Background: (use secondary color)
 Background Hover: (use secondary color light)
 Color: #000000
 Font Weight: 600
+Border Radius: 100px
+
+### Boxes / Cards
+Background: (use gray color)
+Font Size: (use small font size)
+Border Radius: 10px
+
 
 

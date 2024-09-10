@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>intrinsify Shoppy</title>
+    <title>Toolkits</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
     <script>
@@ -11,21 +11,26 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#52B6D3', // New primary color
-                        'primary-dark': '#3A8FA8', // Darker shade of primary
-                        'primary-light': '#7AC7DE', // Lighter shade of primary
-                        secondary: '#FFCD0C', // New button color
-                        'secondary-dark': '#E6B700', // Darker shade of button color
-                        'secondary-light': '#FFD940', // Lighter shade of button color
-                        'page-bg': '#F0F8FA', // Light blue background
-                        'neutral-gray': '#F0F8FA', // Light blue for neutral areas
-                        'input-bg': 'rgba(82,182,211,0.1)', // Semi-transparent primary color
+                        primary: '#52B6D3',
+                        'primary-dark': '#337082',
+                        'primary-light': '#52B6D3',
+                        secondary: '#FFCD0C',
+                        'secondary-dark': '#FFCD0C',
+                        'secondary-light': '#FFCD0C',
+                        'page-bg': '#ffffff',
+                        'neutral-gray': '#f6f6f6',
+                        'border-color': '#D0DFE4',
                     },
                     fontFamily: {
                         'barlow': ['Barlow', 'sans-serif'],
                     },
+                    fontSize: {
+                        'normal': '1.35rem',
+                        'small': '1.15rem',
+                    },
                     maxWidth: {
-                        'container': '650px', // Changed from '900px' to '650px'
+                        'container': '1200px',
+                        'container-small': '750px',
                     },
                 },
             },
@@ -34,11 +39,301 @@
     <style>
         body {
             font-family: 'Barlow', sans-serif;
-            background-color: #F0F8FA; 
+            font-weight: 400;
+            color: #000000;
+            font-size: 1.35rem;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Barlow', sans-serif;
+            font-weight: 700;
+            color: #000000;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .popup.open {
+            display: flex;
+        }
+        .price-badge {
+            display: inline-block;
+            background-color: #52B6D3;
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
         }
     </style>
 </head>
-<body class="bg-page-bg p-4 md:p-8">
-    
+<body class="bg-page-bg">
+    <div class="max-w-container mx-auto px-4 py-8">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl">Toolkits</h1>
+            <div class="flex items-center">
+                <p id="totalPrice" class="mr-4 font-semibold">Total: €0</p>
+                <p id="priceBadge" class="price-badge mr-2" style="display: none;">Reduced price unlocked</p>
+                <button id="cartButton" class="bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded-lg flex items-center">
+                    Cart
+                    <span id="cartCount" class="ml-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">0</span>
+                </button>
+            </div>
+        </header>
+        <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h2 id="popupTitle" class="text-2xl font-bold mb-4"></h2>
+            <p id="popupTagline" class="text-small mb-2"></p>
+            <p id="popupDescription" class="mb-4"></p>
+            <div id="popupFeatures" class="grid grid-cols-2 gap-4 mb-4"></div>
+            <p id="popupPrice" class="text-xl font-bold mb-4"></p>
+            <button id="popupClose" class="bg-primary hover:bg-primary-dark text-white font-semibold py-2 px-4 rounded-lg">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            {
+                id: 1,
+                tagline: "For Team Leaders",
+                title: "Leadership Toolkit",
+                description: "A comprehensive toolkit for effective team leadership.",
+                features: [
+                    "3 Diagnostic Tools",
+                    "1 Team Survey",
+                    "3 Idea Catalogs",
+                    "1 Workshop Guide",
+                    "2 Practical Examples",
+                    "AI Conversation Partner"
+                ],
+                price: 99
+            },
+            {
+                id: 2,
+                tagline: "For Project Managers",
+                title: "Project Management Suite",
+                description: "Essential tools for successful project management.",
+                features: [
+                    "Gantt Chart Creator",
+                    "Risk Assessment Tool",
+                    "Resource Allocation Planner",
+                    "Stakeholder Communication Guide",
+                    "5 Project Templates",
+                    "AI Project Assistant"
+                ],
+                price: 99
+            },
+            {
+                id: 3,
+                tagline: "For HR Professionals",
+                title: "HR Optimization Pack",
+                description: "Streamline your HR processes with this comprehensive pack.",
+                features: [
+                    "Employee Onboarding Checklist",
+                    "Performance Review Templates",
+                    "Compensation Analysis Tool",
+                    "Employee Engagement Survey",
+                    "Diversity & Inclusion Guide",
+                    "AI HR Chatbot"
+                ],
+                price: 99
+            },
+            {
+                id: 4,
+                tagline: "For Marketing Teams",
+                title: "Digital Marketing Toolkit",
+                description: "Boost your online presence with these powerful marketing tools.",
+                features: [
+                    "Social Media Calendar",
+                    "SEO Optimization Guide",
+                    "Email Marketing Templates",
+                    "Analytics Dashboard",
+                    "Content Creation Workbook",
+                    "AI Marketing Strategist"
+                ],
+                price: 99
+            },
+            {
+                id: 5,
+                tagline: "For Sales Professionals",
+                title: "Sales Acceleration Bundle",
+                description: "Supercharge your sales process with this comprehensive bundle.",
+                features: [
+                    "CRM Integration Guide",
+                    "Sales Pitch Builder",
+                    "Objection Handling Scripts",
+                    "Lead Scoring Model",
+                    "Sales Forecasting Tool",
+                    "AI Sales Coach"
+                ],
+                price: 99
+            },
+            {
+                id: 6,
+                tagline: "For Customer Service Teams",
+                title: "Customer Experience Enhancer",
+                description: "Elevate your customer service with these powerful tools.",
+                features: [
+                    "Customer Journey Mapping Tool",
+                    "Feedback Analysis Dashboard",
+                    "Service Recovery Playbook",
+                    "Omnichannel Support Guide",
+                    "Customer Loyalty Program Builder",
+                    "AI Customer Service Trainer"
+                ],
+                price: 99
+            },
+            {
+                id: 7,
+                tagline: "For Product Managers",
+                title: "Product Development Accelerator",
+                description: "Streamline your product development process with this toolkit.",
+                features: [
+                    "Product Roadmap Creator",
+                    "User Story Template",
+                    "Feature Prioritization Matrix",
+                    "Competitive Analysis Framework",
+                    "User Testing Guide",
+                    "AI Product Advisor"
+                ],
+                price: 99
+            },
+            {
+                id: 8,
+                tagline: "For Finance Teams",
+                title: "Financial Planning Toolkit",
+                description: "Optimize your financial strategies with these essential tools.",
+                features: [
+                    "Budgeting Spreadsheet",
+                    "Financial Forecasting Model",
+                    "Investment Analysis Tool",
+                    "Cash Flow Management Guide",
+                    "Risk Assessment Calculator",
+                    "AI Financial Analyst"
+                ],
+                price: 99
+            },
+            {
+                id: 9,
+                tagline: "For Entrepreneurs",
+                title: "Startup Success Kit",
+                description: "Everything you need to launch and grow your startup.",
+                features: [
+                    "Business Plan Template",
+                    "Pitch Deck Builder",
+                    "Market Research Guide",
+                    "Funding Strategy Planner",
+                    "Growth Hacking Tactics",
+                    "AI Startup Mentor"
+                ],
+                price: 99
+            }
+        ];
+
+        const productGrid = document.getElementById('productGrid');
+        const cartButton = document.getElementById('cartButton');
+        const cartCount = document.getElementById('cartCount');
+        const totalPrice = document.getElementById('totalPrice');
+        const priceBadge = document.getElementById('priceBadge');
+        const popup = document.getElementById('popup');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupTagline = document.getElementById('popupTagline');
+        const popupDescription = document.getElementById('popupDescription');
+        const popupFeatures = document.getElementById('popupFeatures');
+        const popupPrice = document.getElementById('popupPrice');
+        const popupClose = document.getElementById('popupClose');
+        let cart = [];
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'bg-neutral-gray rounded-lg p-6 flex flex-col h-full';
+            card.innerHTML = `
+                <p class="text-small mb-2">${product.tagline}</p>
+                <h2 class="text-xl font-bold mb-4">${product.title}</h2>
+                <button class="more-link text-primary hover:text-primary-dark mb-4">More Info</button>
+                <button class="add-to-cart mt-auto bg-secondary hover:bg-secondary-light text-black font-semibold py-2 px-4 rounded-lg">Add to Cart</button>
+            `;
+
+            const moreLink = card.querySelector('.more-link');
+            moreLink.addEventListener('click', () => showProductDetails(product));
+
+            const addToCartButton = card.querySelector('.add-to-cart');
+            addToCartButton.addEventListener('click', () => addToCart(product));
+
+            return card;
+        }
+
+        function showProductDetails(product) {
+            popupTitle.textContent = product.title;
+            popupTagline.textContent = product.tagline;
+            popupDescription.textContent = product.description;
+            popupFeatures.innerHTML = product.features.map(feature => `<p class="text-small">• ${feature}</p>`).join('');
+            popupPrice.textContent = `Price: €${getProductPrice()}`;
+            popup.classList.add('open');
+        }
+
+        function addToCart(product) {
+            cart.push(product);
+            updateCartCount();
+            updateTotalPrice();
+            updatePriceBadge();
+        }
+
+        function updateCartCount() {
+            cartCount.textContent = cart.length;
+        }
+
+        function getProductPrice() {
+            return cart.length >= 4 ? 89 : 99;
+        }
+
+        function updateTotalPrice() {
+            const total = cart.reduce((sum, product) => sum + getProductPrice(), 0);
+            totalPrice.textContent = `Total: €${total}`;
+        }
+
+        function updatePriceBadge() {
+            if (cart.length >= 4) {
+                priceBadge.style.display = 'inline-block';
+            } else {
+                priceBadge.style.display = 'none';
+            }
+        }
+
+        products.forEach(product => {
+            const card = createProductCard(product);
+            productGrid.appendChild(card);
+        });
+
+        cartButton.addEventListener('click', () => {
+            const productTitles = cart.map(product => product.title).join(',');
+            const totalSum = cart.reduce((sum, product) => sum + getProductPrice(), 0);
+            const url = `https://future-leadership.de/payment/?payment_product_1=Toolkits: ${encodeURIComponent(productTitles)}&payment_product_1_total=${totalSum}`;
+            window.open(url, '_blank');
+        });
+
+        popupClose.addEventListener('click', () => {
+            popup.classList.remove('open');
+        });
+    </script>
 </body>
 </html>
