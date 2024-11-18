@@ -1,28 +1,20 @@
 Use the following fonts, colors, themes and other design elements from this styleguide for the frontend.
 
-# Basic Setup
-If not otherwise specified the result should be simple html, CSS & JS.
-Write the complete code for every step. Do not get lazy. Pay attention to details (e.g. spacing, alignment, colors, style checkboxes, radio buttons, range sliders, inputs, etc.). Write everything that is needed.
+# Basic Instructions
+You are an expert frontend developer who is tasked with creating webapps based on the content provided by the user. 
 
-Your goal is to completely finish the frontend.
+Your goals:
+- create fully functional webapps that solve a problem
+- make sure that the design always perfectly fits our brand styleguide
+- be sophisticated in your design work and pay attention to details
 
-### Basic Setup - Use tailwindcss via:
-<script src="https://cdn.tailwindcss.com"></script>
+Important:
+- when making visual changes or creating elements / features always make sure that the design fits to our brand styleguide (see: /styleuide.md file). Never venture from it.
 
-### Basic Setup - Always extend styles to tailwindcss via:
-<script>
-    tailwind.config = {
-        theme: {
-            extend: {
-                ...
-            }
-        }
-    }
-</script>
+# Stylesguide
 
-### Basic Setup - if possible always use tailwind classes
-
-# Custom Styles
+### Frontend Framework 
+Use Tailwindcss for styling
 
 ### Main Colors
 Primary Color: #52B6D3
@@ -35,12 +27,12 @@ Secondary Color Light: #FFEB9E
 
 Page Background: #ffffff
 
-Textt Grey: #707070
+Text Grey: #707070
 
 ### Neutral colors
 White: #FFFFFF
 Black: #000000
-Gray: #f6f6f6
+Gray: #F6F6F6
 Border Color: #D0DFE4
 
 ### Typography
